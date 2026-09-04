@@ -19,20 +19,25 @@
       emailjs.init("eVykpcx5pKB6QOkY_");
   })();
 
-  // 2. Инициализация Firebase (Вставьте ваши ключи проекта)
+    // 1. Инициализация EmailJS
+  (function(){
+      emailjs.init("eVykpcx5pKB6QOkY_");
+  })();
+
+  // 2. Инициализация Firebase с вашими настоящими ключами
   const firebaseConfig = {
-    apiKey: "ВАШ_API_KEY",
-    authDomain: "ВАШ_PROJECT_ID.firebaseapp.com",
-    projectId: "ВАШ_PROJECT_ID",
-    storageBucket: "ВАШ_PROJECT_ID.appspot.com",
-    messagingSenderId: "ВАШ_SENDER_ID",
-    appId: "ВАШ_APP_ID"
+    apiKey: "AIzaSyAdieSc0CpKvG-WfsLqaJkhFV_w69A4nQQ",
+    authDomain: "warehouse26-fbbee.firebaseapp.com",
+    projectId: "warehouse26-fbbee",
+    storageBucket: "warehouse26-fbbee.firebasestorage.app",
+    messagingSenderId: "965022333314",
+    appId: "1:965022333314:web:cc42992352bb1ee855379b",
+    measurementId: "G-QQ7G4S2HL5"
   };
 
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
-</script>
 
 <style>
 :root {
