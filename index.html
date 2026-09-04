@@ -19,12 +19,7 @@
       emailjs.init("eVykpcx5pKB6QOkY_");
   })();
 
-    // 1. Инициализация EmailJS
-  (function(){
-      emailjs.init("eVykpcx5pKB6QOkY_");
-  })();
-
-  // 2. Инициализация Firebase с вашими настоящими ключами
+  // 2. Инициализация Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyAdieSc0CpKvG-WfsLqaJkhFV_w69A4nQQ",
     authDomain: "warehouse26-fbbee.firebaseapp.com",
@@ -38,6 +33,7 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
+</script>
 
 <style>
 :root {
@@ -76,7 +72,6 @@ body {
 .auth-nav-links { display: flex; justify-content: space-between; margin-top: 16px; font-size: 12px; }
 .auth-link { color: #ff9d43; cursor: pointer; text-decoration: underline; background: none; border: none; padding: 0; }
 
-/* Всплывающее информационное окно (Toast) */
 .toast-info {
   position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
   background: rgba(15, 31, 56, 0.95); border: 1px solid rgba(255, 255, 255, 0.2);
@@ -96,7 +91,7 @@ body {
   <div class="auth-title" id="authTitle">Вход в систему</div>
   <div class="auth-sub" id="authSub">Введите Email и пароль</div>
 
-  <!-- ФОРМА 1: ВХОД -->
+  <!-- ФОРМА: ВХОД -->
   <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
     <div class="auth-field">
       <label>Email адрес</label>
@@ -109,24 +104,42 @@ body {
     <button type="submit" class="btn-primary">Войти</button>
   </form>
 
-  <!-- ФОРМА 2: РЕГИСТРАЦИЯ -->
-  <form class="auth-form" id="regForm" style="display:none;" onsubmit="handleRegister(event)">
-    <div class="auth-field">
-      <label>Имя</label>
-      <input type="text" id="regName" class="auth-input" placeholder="Иван" required>
-    </div>
+  <!-- РЕГИСТРАЦИЯ - ШАГ 1: Ввод Email -->
+  <form class="auth-form" id="regStep1" style="display:none;" onsubmit="sendRegCode(event)">
     <div class="auth-field">
       <label>Email адрес</label>
       <input type="email" id="regEmail" class="auth-input" placeholder="user@example.com" required>
+    </div>
+    <button type="submit" class="btn-primary" id="btnSendRegCode">Получить код</button>
+  </form>
+
+  <!-- РЕГИСТРАЦИЯ - ШАГ 2: Ввод кода из Email -->
+  <form class="auth-form" id="regStep2" style="display:none;" onsubmit="verifyRegCode(event)">
+    <div class="auth-field">
+      <label>Код из Email</label>
+      <input type="text" id="regCodeInput" class="auth-input" placeholder="6-значный код" maxlength="6" required>
+    </div>
+    <button type="submit" class="btn-primary">Подтвердить код</button>
+  </form>
+
+  <!-- РЕГИСТРАЦИЯ - ШАГ 3: Ввод Имени, Фамилии и Пароля -->
+  <form class="auth-form" id="regStep3" style="display:none;" onsubmit="completeRegistration(event)">
+    <div class="auth-field">
+      <label>Имя</label>
+      <input type="text" id="regFirstName" class="auth-input" placeholder="Иван" required>
+    </div>
+    <div class="auth-field">
+      <label>Фамилия</label>
+      <input type="text" id="regLastName" class="auth-input" placeholder="Иванов" required>
     </div>
     <div class="auth-field">
       <label>Пароль</label>
       <input type="password" id="regPassword" class="auth-input" placeholder="••••••••" minlength="6" required>
     </div>
-    <button type="submit" class="btn-primary">Зарегистрироваться</button>
+    <button type="submit" class="btn-primary">Завершить регистрацию</button>
   </form>
 
-  <!-- ФОРМА 3: ВОССТАНОВЛЕНИЕ (ШАГ 1 - ВВОД EMAIL) -->
+  <!-- СБРОС ПАРОЛЯ - ШАГ 1 -->
   <form class="auth-form" id="resetStep1" style="display:none;" onsubmit="sendResetCode(event)">
     <div class="auth-field">
       <label>Email для восстановления</label>
@@ -135,7 +148,7 @@ body {
     <button type="submit" class="btn-primary" id="btnSendReset">Отправить код</button>
   </form>
 
-  <!-- ФОРМА 4: ВОССТАНОВЛЕНИЕ (ШАГ 2 - КОД И НОВЫЙ ПАРОЛЬ) -->
+  <!-- СБРОС ПАРОЛЯ - ШАГ 2 -->
   <form class="auth-form" id="resetStep2" style="display:none;" onsubmit="verifyResetCode(event)">
     <div class="auth-field">
       <label>Код из Email</label>
@@ -156,10 +169,12 @@ body {
 </div>
 
 <script>
+let tempRegEmail = "";
+let tempRegCode = null;
+
 let currentResetCode = null;
 let currentResetEmail = "";
 
-// Показ информационного окна
 function showToast(message, isError = false) {
   const toast = document.getElementById('toastBox');
   toast.textContent = message;
@@ -168,10 +183,11 @@ function showToast(message, isError = false) {
   setTimeout(() => { toast.style.display = 'none'; }, 3500);
 }
 
-// Переключение экранов
 function switchMode(mode) {
   document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('regForm').style.display = 'none';
+  document.getElementById('regStep1').style.display = 'none';
+  document.getElementById('regStep2').style.display = 'none';
+  document.getElementById('regStep3').style.display = 'none';
   document.getElementById('resetStep1').style.display = 'none';
   document.getElementById('resetStep2').style.display = 'none';
 
@@ -184,9 +200,9 @@ function switchMode(mode) {
     document.getElementById('rightLink').textContent = 'Регистрация';
     document.getElementById('rightLink').onclick = () => switchMode('register');
   } else if (mode === 'register') {
-    document.getElementById('authTitle').textContent = 'Регистрация';
-    document.getElementById('authSub').textContent = 'Создайте учётную запись';
-    document.getElementById('regForm').style.display = 'flex';
+    document.getElementById('authTitle').textContent = 'Регистрация — Шаг 1';
+    document.getElementById('authSub').textContent = 'Введите Email для получения кода';
+    document.getElementById('regStep1').style.display = 'flex';
     document.getElementById('leftLink').textContent = 'Уже есть аккаунт?';
     document.getElementById('leftLink').onclick = () => switchMode('login');
     document.getElementById('rightLink').textContent = '';
@@ -200,7 +216,7 @@ function switchMode(mode) {
   }
 }
 
-// 1. ОБРАБОТКА ВХОДА
+// 1. ВХОД
 function handleLogin(event) {
   event.preventDefault();
   const email = document.getElementById('loginEmail').value.trim().toLowerCase();
@@ -217,52 +233,101 @@ function handleLogin(event) {
     });
 }
 
-// 2. ОБРАБОТКА РЕГИСТРАЦИИ С ПРОВЕРКОЙ В FIRESTORE
-async function handleRegister(event) {
+// 2. РЕГИСТРАЦИЯ - ШАГ 1: Отправка кода
+async function sendRegCode(event) {
   event.preventDefault();
-  const name = document.getElementById('regName').value.trim();
   const email = document.getElementById('regEmail').value.trim().toLowerCase();
-  const password = document.getElementById('regPassword').value.trim();
+  const btn = document.getElementById('btnSendRegCode');
 
   try {
-    // Проверяем, зарегистрирован ли Email в базе Firestore
     const userQuery = await db.collection('users').where('email', '==', email).get();
     if (!userQuery.empty) {
       showToast('Пользователь с таким Email уже существует!', true);
       return;
     }
 
-    // Создаем аккаунт в Auth
-    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+    btn.textContent = 'Отправка...';
+    btn.disabled = true;
+
+    tempRegEmail = email;
+    tempRegCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const templateParams = {
+      to_email: email,
+      email: email,
+      passcode: tempRegCode,
+      code: tempRegCode
+    };
+
+    await emailjs.send('service_gqzvbbf', 'template_43migsz', templateParams);
+
+    btn.textContent = 'Получить код';
+    btn.disabled = false;
+    showToast(`Код отправлен на ${email}`);
+
+    document.getElementById('regStep1').style.display = 'none';
+    document.getElementById('regStep2').style.display = 'flex';
+    document.getElementById('authTitle').textContent = 'Регистрация — Шаг 2';
+    document.getElementById('authSub').textContent = 'Введите код, отправленный на почту';
+
+  } catch (error) {
+    btn.textContent = 'Получить код';
+    btn.disabled = false;
+    showToast('Ошибка при отправке кода на Email.', true);
+  }
+}
+
+// 3. РЕГИСТРАЦИЯ - ШАГ 2: Проверка кода
+function verifyRegCode(event) {
+  event.preventDefault();
+  const inputCode = document.getElementById('regCodeInput').value.trim();
+
+  if (inputCode !== tempRegCode) {
+    showToast('Неверный код из Email!', true);
+    return;
+  }
+
+  showToast('Email подтверждён!');
+  document.getElementById('regStep2').style.display = 'none';
+  document.getElementById('regStep3').style.display = 'flex';
+  document.getElementById('authTitle').textContent = 'Регистрация — Шаг 3';
+  document.getElementById('authSub').textContent = 'Укажите ваши данные и пароль';
+}
+
+// 4. РЕГИСТРАЦИЯ - ШАГ 3: Ввод личных данных и завершение
+async function completeRegistration(event) {
+  event.preventDefault();
+  const firstName = document.getElementById('regFirstName').value.trim();
+  const lastName = document.getElementById('regLastName').value.trim();
+  const password = document.getElementById('regPassword').value.trim();
+
+  try {
+    const userCredential = await auth.createUserWithEmailAndPassword(tempRegEmail, password);
     const user = userCredential.user;
 
-    // Сохраняем в Firestore
     await db.collection('users').doc(user.uid).set({
-      name: name,
-      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      fullName: `${firstName} ${lastName}`,
+      email: tempRegEmail,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    showToast('Регистрация завершена успешно!');
+    showToast('Регистрация успешно завершена!');
     localStorage.setItem('wh_authenticated', 'true');
     setTimeout(() => { window.location.href = 'warehouse.html'; }, 1000);
 
   } catch (error) {
-    if (error.code === 'auth/email-already-in-use') {
-      showToast('Этот Email уже зарегистрирован в системе.', true);
-    } else {
-      showToast('Ошибка регистрации: ' + error.message, true);
-    }
+    showToast('Ошибка сохранения: ' + error.message, true);
   }
 }
 
-// 3. ОТПРАВКА КОДА ВОССТАНОВЛЕНИЯ
+// 5. ВОССТАНОВЛЕНИЕ ПАРОЛЯ
 async function sendResetCode(event) {
   event.preventDefault();
   const email = document.getElementById('resetEmail').value.trim().toLowerCase();
   const btn = document.getElementById('btnSendReset');
 
-  // Проверяем наличие Email в базе
   const userQuery = await db.collection('users').where('email', '==', email).get();
   if (userQuery.empty) {
     showToast('Пользователь с таким Email не найден!', true);
@@ -286,7 +351,7 @@ async function sendResetCode(event) {
     .then(() => {
       btn.textContent = 'Отправить код';
       btn.disabled = false;
-      showToast(`Код отправлен на почту ${email}`);
+      showToast(`Код отправлен на ${email}`);
       document.getElementById('resetStep1').style.display = 'none';
       document.getElementById('resetStep2').style.display = 'flex';
     })
@@ -297,7 +362,6 @@ async function sendResetCode(event) {
     });
 }
 
-// 4. ПРОВЕРКА КОДА И СБРОС ПАРОЛЯ
 async function verifyResetCode(event) {
   event.preventDefault();
   const inputCode = document.getElementById('resetCodeInput').value.trim();
@@ -309,7 +373,7 @@ async function verifyResetCode(event) {
 
   try {
     await auth.sendPasswordResetEmail(currentResetEmail);
-    showToast('Инструкция по смене пароля отправлена! Войдите в аккаунт.');
+    showToast('Ссылка для сброса отправлена на почту!');
     switchMode('login');
   } catch (err) {
     showToast('Ошибка сброса: ' + err.message, true);
