@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru" dir="ltr">
 <head>
-  <script>
-  if (localStorage.getItem('wh_authenticated') !== 'true') {
-    window.location.href = 'index.html';
-  }
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <meta name="theme-color" content="#1563b8">
@@ -17,7 +12,7 @@
 <title>Warehouse</title>
 <script async src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script async src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script async src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 /* Keep the diagnostic hook independent from the application scripts. */
 (function () {
@@ -530,6 +525,11 @@ body[data-theme="dark"] .export-date-item.selected{background:rgba(28,126,214,0.
   background:#f0f4f8;transform:translateX(100%);transition:transform 0.38s cubic-bezier(0.2,0,0,1);
   overflow:hidden;}
 .fullscreen-modal.open{transform:translateX(0);}
+.profile-row{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 4px;border-bottom:1px solid var(--border,rgba(0,0,0,0.08));}
+.profile-row:last-child{border-bottom:none;}
+.profile-row-label{font-size:13px;color:var(--muted,#888);font-weight:600;}
+.profile-row-value{font-size:15px;font-weight:600;text-align:right;}
 #cardFilterModal{z-index:9000;}
 .modal-topbar{display:flex;align-items:center;gap:8px;flex-shrink:0;
   background:linear-gradient(135deg,#0f1f38,#1a2f4a);
@@ -1257,6 +1257,11 @@ body[data-theme="dark"] .photo-thumb-del-btn{border-color:#0d1a2d;}
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .inventory-address-part:first-child strong{color:var(--carrot-dark);}
 .inventory-footer{padding-top:10px;}
+.inventory-footer-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;}
+.inventory-footer-actions .inventory-export-btn{min-width:0;}
+.inventory-import-btn{width:100%;border:1px solid var(--blue);border-radius:10px;padding:11px 8px;
+  background:var(--blue);color:#fff;font:inherit;font-size:13px;font-weight:800;cursor:pointer;}
+.inventory-import-btn:active{opacity:.82;transform:scale(.98);}
 .inventory-address-picker-overlay{position:fixed;inset:0;z-index:10020;display:flex;align-items:center;
   justify-content:center;padding:18px;background:rgba(0,0,0,.58);opacity:0;pointer-events:none;
   transition:opacity .18s;}
@@ -1307,6 +1312,114 @@ body[data-theme="dark"] .photo-thumb-del-btn{border-color:#0d1a2d;}
 .inventory-ean-scan-btn svg{width:23px;height:23px;}
 .inventory-scan-label{display:inline-block;}
 .inventory-ean-status{min-height:16px;font-size:11px;line-height:1.35;}
+.inventory-status{min-height:18px;margin-top:8px;padding:7px 9px;border-radius:8px;
+  color:var(--muted);font-size:11px;line-height:1.35;}
+.inventory-status.ok{background:#f0fff4;color:var(--green);}
+.inventory-status.error{background:#fff5f5;color:var(--red);}
+.inventory-expiry-row{flex-shrink:0;margin:2px 0 7px;padding:8px 9px;border:1px solid var(--border);
+  border-radius:10px;background:rgba(255,255,255,.68);}
+.inventory-expiry-head{display:flex;align-items:center;gap:8px;min-width:0;}
+.inventory-expiry-title{flex:1;min-width:0;font-size:11px;font-weight:900;color:var(--text);}
+.inventory-expiry-value{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:11px;font-weight:800;color:var(--blue);}
+.inventory-expiry-toggle{position:relative;width:42px;height:24px;flex-shrink:0;border:0;border-radius:14px;
+  background:#ced4da;cursor:pointer;transition:background .18s;}
+.inventory-expiry-toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;
+  border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.24);transition:transform .18s;}
+.inventory-expiry-toggle.on{background:var(--green);}
+.inventory-expiry-toggle.on::after{transform:translateX(18px);}
+.inventory-expiry-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:7px;}
+.inventory-expiry-button{min-width:0;padding:7px 4px;border:1.5px solid var(--border);border-radius:8px;
+  background:#fff;color:var(--sub);font:inherit;font-size:11px;font-weight:800;cursor:pointer;}
+.inventory-expiry-button.selected{border-color:var(--blue);background:#e7f5ff;color:var(--blue);}
+.inventory-expiry-button:disabled{opacity:.45;cursor:not-allowed;}
+.inventory-name-row{position:relative;display:flex;align-items:stretch;gap:7px;flex-shrink:0;margin:0 0 7px;}
+.inventory-name-input{flex:1;min-width:0;padding:9px 11px;border:1.5px solid var(--border);border-radius:9px;
+  font:inherit;font-size:14px;color:var(--text);background:#fff;outline:none;}
+.inventory-name-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(28,126,214,.12);}
+.inventory-name-save{width:78px;flex-shrink:0;border:0;border-radius:9px;background:var(--green);color:#fff;
+  font:inherit;font-size:12px;font-weight:900;cursor:pointer;}
+.inventory-name-save:active{opacity:.82;transform:scale(.98);}
+.inventory-name-suggestions{position:absolute;z-index:20;left:0;right:85px;top:calc(100% + 3px);display:none;
+  max-height:180px;overflow-y:auto;padding:4px;border:1px solid var(--border);border-radius:9px;
+  background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.16);}
+.inventory-name-suggestions.open{display:flex;flex-direction:column;gap:2px;}
+.inventory-name-suggestion{padding:8px 9px;border:0;border-radius:6px;background:transparent;color:var(--text);
+  text-align:left;font:inherit;font-size:12px;cursor:pointer;}
+.inventory-name-suggestion:active,.inventory-name-suggestion:hover{background:#e7f5ff;color:var(--blue);}
+.inventory-expiry-picker-overlay{position:fixed;inset:0;z-index:10030;display:flex;align-items:center;
+  justify-content:center;padding:18px;background:rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .18s;}
+.inventory-expiry-picker-overlay.open{opacity:1;pointer-events:auto;}
+.inventory-expiry-picker{width:min(410px,calc(100vw - 24px));max-height:min(88vh,680px);display:flex;
+  flex-direction:column;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.35);}
+.inventory-expiry-picker-header{display:flex;align-items:center;gap:10px;padding:14px 16px;
+  background:linear-gradient(135deg,#0f1f38,#1a2f4a);color:#fff;}
+.inventory-expiry-picker-header h3{flex:1;margin:0;font-size:17px;}
+.inventory-expiry-picker-header button{width:28px;height:28px;border:0;border-radius:8px;
+  background:rgba(255,255,255,.12);color:#fff;font-size:15px;cursor:pointer;}
+.inventory-expiry-picker-body{overflow:hidden;padding:12px;background:#f0f4f8;display:flex;flex-direction:column;gap:10px;}
+.inventory-expiry-picker-hint{font-size:11px;font-weight:900;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;}
+.inventory-expiry-years-wrap{position:relative;overflow:hidden;border-radius:11px;background:#fff;border:1px solid var(--border);}
+.inventory-expiry-years-wrap::before,.inventory-expiry-years-wrap::after{content:'';position:absolute;top:0;bottom:0;width:44px;z-index:2;pointer-events:none;}
+.inventory-expiry-years-wrap::before{left:0;background:linear-gradient(90deg,#fff,rgba(255,255,255,0));}
+.inventory-expiry-years-wrap::after{right:0;background:linear-gradient(270deg,#fff,rgba(255,255,255,0));}
+.inventory-expiry-years{display:flex;align-items:center;gap:4px;overflow-x:auto;scroll-snap-type:x mandatory;
+  scrollbar-width:none;padding:8px calc((100% - 58px)/2);overscroll-behavior-x:contain;}
+.inventory-expiry-years::-webkit-scrollbar{display:none;}
+.inventory-expiry-year{width:58px;min-width:58px;height:46px;padding:0;border:0;border-radius:9px;
+  background:transparent;color:#9aa5b1;font:inherit;font-size:14px;font-weight:800;cursor:pointer;scroll-snap-align:center;
+  transition:transform .15s,color .15s,background .15s;}
+.inventory-expiry-year.near{font-size:16px;color:#637083;}
+.inventory-expiry-year.selected{background:#e7f5ff;color:var(--blue);font-size:23px;font-weight:950;transform:scale(1.04);}
+.inventory-expiry-lower{display:grid;grid-template-columns:112px minmax(0,1fr);gap:10px;min-height:270px;}
+.inventory-expiry-months{display:flex;flex-direction:column;gap:3px;overflow-y:auto;padding:5px 4px;border:1px solid var(--border);
+  border-radius:11px;background:#fff;scrollbar-width:thin;}
+.inventory-expiry-month{min-height:19px;padding:2px 3px;border:0;border-radius:6px;background:transparent;color:var(--sub);
+  text-align:left;font:inherit;font-size:10px;font-weight:800;cursor:pointer;}
+.inventory-expiry-month.selected{background:#e7f5ff;color:var(--blue);font-weight:950;}
+.inventory-expiry-calendar{padding:8px;border:1px solid var(--border);border-radius:11px;background:#fff;}
+.inventory-expiry-calendar-title{margin:0 0 7px;text-align:center;color:var(--text);font-size:13px;font-weight:950;}
+.inventory-expiry-weekdays,.inventory-expiry-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;}
+.inventory-expiry-weekdays{margin-bottom:4px;color:#9aa5b1;font-size:9px;font-weight:900;text-align:center;}
+.inventory-expiry-day{min-width:0;aspect-ratio:1;border:0;border-radius:7px;background:#f0f4f8;color:var(--text);
+  font:inherit;font-size:11px;font-weight:800;cursor:pointer;}
+.inventory-expiry-day.empty{background:transparent;cursor:default;}
+.inventory-expiry-day.selected{background:var(--blue);color:#fff;font-weight:950;}
+.inventory-expiry-status{min-height:18px;text-align:center;color:var(--blue);font-size:12px;font-weight:900;}
+.inventory-expiry-picker-footer{display:grid;grid-template-columns:1fr 1.45fr;gap:8px;padding:10px 12px 12px;
+  background:#fff;border-top:1px solid var(--border);}
+.inventory-expiry-picker-footer button{padding:11px 8px;border:0;border-radius:9px;font:inherit;font-size:12px;
+  font-weight:900;cursor:pointer;}
+.inventory-expiry-cancel{background:#edf2f7;color:var(--sub);}
+.inventory-expiry-save{background:var(--green);color:#fff;}
+.inventory-expiry-option{min-height:42px;padding:10px;border:1.5px solid var(--border);border-radius:9px;
+  background:#fff;color:var(--text);font:inherit;font-size:14px;font-weight:800;cursor:pointer;text-align:left;}
+.inventory-expiry-option.selected{border-color:var(--blue);background:#e7f5ff;color:var(--blue);}
+.inventory-expiry-option:active{transform:scale(.98);}
+.inventory-name-modal-overlay{position:fixed;inset:0;z-index:10040;display:flex;align-items:center;
+  justify-content:center;padding:18px;background:rgba(0,0,0,.58);opacity:0;pointer-events:none;
+  transition:opacity .18s;}
+.inventory-name-modal-overlay.open{opacity:1;pointer-events:auto;}
+.inventory-name-modal{width:min(360px,calc(100vw - 36px));background:#fff;border-radius:18px;
+  overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.35);}
+.inventory-name-modal-header{display:flex;align-items:center;gap:10px;padding:14px 16px;
+  background:linear-gradient(135deg,#0f1f38,#1a2f4a);color:#fff;}
+.inventory-name-modal-header h3{flex:1;margin:0;font-size:17px;}
+.inventory-name-modal-header button{width:28px;height:28px;border:0;border-radius:8px;
+  background:rgba(255,255,255,.12);color:#fff;font-size:15px;cursor:pointer;}
+.inventory-name-modal-body{padding:16px;}
+.inventory-name-modal-text{font-size:13px;line-height:1.4;color:var(--sub);margin-bottom:8px;}
+.inventory-name-modal-barcode{font-size:12px;font-weight:800;color:var(--blue);margin-bottom:10px;}
+.inventory-name-modal-input{width:100%;padding:11px 12px;border:1.5px solid var(--border);
+  border-radius:10px;font:inherit;font-size:15px;color:var(--text);background:#fff;outline:none;}
+.inventory-name-modal-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(28,126,214,.12);}
+.inventory-name-modal-status{min-height:18px;margin-top:6px;color:var(--red);font-size:11px;font-weight:700;}
+.inventory-name-modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.inventory-name-modal-actions button{border:0;border-radius:10px;padding:11px 8px;font:inherit;
+  font-size:13px;font-weight:800;cursor:pointer;}
+.inventory-name-modal-skip{background:#f1f3f5;color:var(--sub);}
+.inventory-name-modal-save{background:var(--green);color:#fff;}
+.inventory-name-modal-actions button:active{opacity:.82;transform:scale(.98);}
 .inventory-small-btn{width:48px;flex-shrink:0;border:0;border-radius:10px;padding:0;background:var(--blue);
   color:#fff;font-size:21px;cursor:pointer;}
 .inventory-small-btn:active{opacity:.82;transform:scale(.98);}
@@ -1331,8 +1444,25 @@ body[data-theme="dark"] .photo-thumb-del-btn{border-color:#0d1a2d;}
   color:var(--red);font-size:15px;line-height:1;cursor:pointer;}
 .inventory-operation-delete:active{opacity:.78;transform:scale(.94);}
 .inventory-operation-items{display:flex;flex-direction:column;gap:0;padding-left:8px;}
-.inventory-result-row{display:grid;grid-template-columns:minmax(0,1fr) 60px;gap:7px;align-items:center;
-  padding:4px 2px;border:0;border-bottom:1px solid rgba(134,142,150,.18);border-radius:0;background:transparent;}
+.inventory-swipe-item{position:relative;overflow:hidden;border-bottom:1px solid rgba(134,142,150,.18);
+  --inventory-swipe-actions-width:30%;background:#fff;}
+.inventory-address-swipe{height:46px;min-height:46px;max-height:46px;overflow:hidden;}
+.inventory-address-swipe .inventory-swipe-main,
+.inventory-address-swipe .inventory-swipe-actions{height:46px;min-height:46px;}
+.inventory-swipe-actions{position:absolute;inset:0 0 0 auto;width:30%;display:grid;grid-template-columns:1fr 1fr;
+  gap:4px;padding:4px;background:#eef2f7;z-index:0;visibility:hidden;}
+.inventory-address-swipe .inventory-swipe-actions{grid-template-columns:repeat(3,minmax(0,1fr));}
+.inventory-swipe-item.swiped .inventory-swipe-actions{z-index:2;visibility:visible;}
+.inventory-swipe-action{border:0;border-radius:7px;color:#fff;font:inherit;font-size:11px;font-weight:900;
+  cursor:pointer;min-width:0;}
+.inventory-swipe-action.icon{font-size:18px;line-height:1;}
+.inventory-swipe-action.edit{background:var(--blue);}
+.inventory-swipe-action.delete{background:var(--red);}
+.inventory-swipe-main{position:relative;z-index:1;transition:transform .18s ease;touch-action:pan-y;will-change:transform;}
+.inventory-result-row{display:grid;grid-template-columns:minmax(0,1fr) 52px;
+  gap:7px;align-items:center;padding:4px 2px;border:0;border-radius:0;background:#fff;
+}
+.inventory-swipe-main.swiped{transform:translateX(-30%);}
 .inventory-result-name{font-size:13px;font-weight:800;color:var(--text);overflow-wrap:anywhere;}
 .inventory-result-meta{font-size:10px;line-height:1.25;color:var(--muted);margin-top:1px;overflow-wrap:anywhere;}
 .inventory-qty-input{width:60px;padding:5px 3px;border:1.5px solid var(--blue);border-radius:7px;
@@ -1340,6 +1470,43 @@ body[data-theme="dark"] .photo-thumb-del-btn{border-color:#0d1a2d;}
   text-align:center;outline:none;}
 .inventory-qty-input:focus{box-shadow:0 0 0 3px rgba(28,126,214,.14);}
 .inventory-result-qty{font-size:16px;font-weight:900;color:var(--blue);white-space:nowrap;}
+.inventory-swipe-hint{font-size:10px;color:var(--muted);padding:4px 2px 7px;text-align:right;}
+.inventory-edit-overlay{position:fixed;inset:0;z-index:10060;display:flex;align-items:center;justify-content:center;
+  padding:18px;background:rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .18s;}
+.inventory-edit-overlay.open{opacity:1;pointer-events:auto;}
+.inventory-edit-modal{width:min(430px,calc(100vw - 32px));max-height:min(88vh,720px);display:flex;
+  flex-direction:column;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.35);}
+.inventory-edit-header{display:flex;align-items:center;gap:10px;padding:14px 16px;
+  background:linear-gradient(135deg,#0f1f38,#1a2f4a);color:#fff;}
+.inventory-edit-header h3{flex:1;margin:0;font-size:17px;}
+.inventory-edit-header button{width:28px;height:28px;border:0;border-radius:8px;background:rgba(255,255,255,.12);
+  color:#fff;font-size:15px;cursor:pointer;}
+.inventory-edit-body{overflow-y:auto;padding:14px 16px;background:#f0f4f8;}
+.inventory-edit-field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
+.inventory-edit-field label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.25px;}
+.inventory-edit-field input{width:100%;padding:10px 11px;border:1.5px solid var(--border);border-radius:9px;
+  background:#fff;color:var(--text);font:inherit;font-size:14px;outline:none;}
+.inventory-edit-field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(28,126,214,.12);}
+.inventory-edit-location{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:6px;}
+.inventory-edit-location .inventory-edit-field{min-width:0;}
+.inventory-edit-status{min-height:18px;color:var(--red);font-size:12px;font-weight:700;}
+.inventory-edit-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 16px max(16px,env(safe-area-inset-bottom,16px));}
+.inventory-edit-actions button{border:0;border-radius:10px;padding:12px 8px;font:inherit;font-size:13px;font-weight:900;cursor:pointer;}
+.inventory-edit-cancel{background:#edf2f7;color:var(--sub);}
+.inventory-edit-save{background:var(--green);color:#fff;}
+.inventory-merge-overlay{position:fixed;inset:0;z-index:10070;display:flex;align-items:center;justify-content:center;
+  padding:18px;background:rgba(0,0,0,.48);opacity:0;pointer-events:none;transition:opacity .18s;}
+.inventory-merge-overlay.open{opacity:1;pointer-events:auto;}
+.inventory-merge-modal{width:min(330px,calc(100vw - 36px));padding:20px 18px 16px;text-align:center;
+  background:#fff;border-radius:16px;box-shadow:0 18px 60px rgba(0,0,0,.32);}
+.inventory-merge-icon{width:38px;height:38px;margin:0 auto 9px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;background:#e7f5ff;color:var(--blue);font-size:23px;font-weight:900;}
+.inventory-merge-modal h3{margin:0;color:var(--text);font-size:17px;}
+.inventory-merge-modal p{margin:8px 0 14px;color:var(--sub);font-size:13px;line-height:1.4;}
+.inventory-merge-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.inventory-merge-actions button{border:0;border-radius:9px;padding:11px 7px;font:inherit;font-size:13px;font-weight:900;cursor:pointer;}
+.inventory-merge-no{background:#edf2f7;color:var(--sub);}
+.inventory-merge-yes{background:var(--green);color:#fff;}
 .inventory-empty{text-align:center;color:var(--muted);font-size:13px;padding:18px 8px;}
 .inventory-print-tools{display:none;flex-shrink:0;margin-top:10px;padding:10px;border:1.5px solid var(--border);
   border-radius:12px;background:#fff;align-items:center;gap:10px;}
@@ -1416,10 +1583,33 @@ body[data-theme="dark"] .barcode-order-cancel{background:rgba(255,255,255,.1);co
 body[data-theme="dark"] .inventory-card,
 body[data-theme="dark"] .inventory-list,
 body[data-theme="dark"] .inventory-result-row{background:transparent;border-color:rgba(255,255,255,.1);}
+body[data-theme="dark"] .inventory-swipe-item{background:#132035;border-color:rgba(255,255,255,.1);}
+body[data-theme="dark"] .inventory-swipe-actions{background:#0b1622;}
+body[data-theme="dark"] .inventory-result-row{background:#132035;}
+body[data-theme="dark"] .inventory-edit-modal{background:#132035;}
+body[data-theme="dark"] .inventory-edit-body{background:#0b1622;}
+body[data-theme="dark"] .inventory-edit-field input{background:#132035;color:rgba(255,255,255,.9);border-color:rgba(255,255,255,.15);}
+body[data-theme="dark"] .inventory-merge-modal{background:#132035;}
+body[data-theme="dark"] .inventory-merge-modal h3{color:rgba(255,255,255,.92);}
+body[data-theme="dark"] .inventory-merge-modal p{color:rgba(255,255,255,.68);}
+body[data-theme="dark"] .inventory-expiry-years-wrap::before{background:linear-gradient(90deg,#132035,rgba(19,32,53,0));}
+body[data-theme="dark"] .inventory-expiry-years-wrap::after{background:linear-gradient(270deg,#132035,rgba(19,32,53,0));}
+body[data-theme="dark"] .inventory-expiry-years-wrap,
+body[data-theme="dark"] .inventory-expiry-months,
+body[data-theme="dark"] .inventory-expiry-calendar,
+body[data-theme="dark"] .inventory-expiry-picker-footer{background:#132035;}
+body[data-theme="dark"] .inventory-expiry-year,
+body[data-theme="dark"] .inventory-expiry-month,
+body[data-theme="dark"] .inventory-expiry-day{color:rgba(255,255,255,.72);}
+body[data-theme="dark"] .inventory-expiry-year.selected,
+body[data-theme="dark"] .inventory-expiry-month.selected{background:#174e7a;color:#fff;}
+body[data-theme="dark"] .inventory-expiry-day{background:#1a2f4a;}
+body[data-theme="dark"] .inventory-expiry-day.empty{background:transparent;}
 body[data-theme="dark"] .inventory-operation-address{background:transparent;border-color:rgba(116,192,252,.35);color:#74c0fc;}
 body[data-theme="dark"] .inventory-operation-address.current{background:transparent;border-color:rgba(255,157,67,.45);color:#ffb36b;}
 body[data-theme="dark"] .inventory-operation-qr{background:#1c7ed6;color:#fff;}
 body[data-theme="dark"] .inventory-operation-delete{background:rgba(224,49,49,.14);border-color:rgba(255,135,135,.3);}
+body[data-theme="dark"] .inventory-result-delete{background:rgba(224,49,49,.14);border-color:rgba(255,135,135,.3);}
 body[data-theme="dark"] .inventory-address-input,
 body[data-theme="dark"] .inventory-product-input,
 body[data-theme="dark"] .inventory-search-input,
@@ -1428,6 +1618,18 @@ body[data-theme="dark"] .inventory-date-input,
 body[data-theme="dark"] .inventory-qty-input{background:#1a2f4a;color:rgba(255,255,255,.9);border-color:rgba(255,255,255,.15);}
 body[data-theme="dark"] .inventory-ean-input{background:#1a2f4a;color:rgba(255,255,255,.9);border-color:rgba(255,255,255,.15);}
 body[data-theme="dark"] .inventory-ean-input::placeholder{color:rgba(255,255,255,.35);}
+body[data-theme="dark"] .inventory-expiry-row,
+body[data-theme="dark"] .inventory-name-input,
+body[data-theme="dark"] .inventory-name-suggestions{background:#132035;color:rgba(255,255,255,.9);border-color:rgba(255,255,255,.15);}
+body[data-theme="dark"] .inventory-expiry-button,
+body[data-theme="dark"] .inventory-expiry-option{background:#1a2f4a;color:rgba(255,255,255,.9);border-color:rgba(255,255,255,.15);}
+body[data-theme="dark"] .inventory-name-modal{background:#132035;}
+body[data-theme="dark"] .inventory-name-modal-text{color:rgba(255,255,255,.72);}
+body[data-theme="dark"] .inventory-name-modal-input{background:#1a2f4a;color:rgba(255,255,255,.9);border-color:rgba(255,255,255,.15);}
+body[data-theme="dark"] .inventory-name-modal-skip{background:#1a2f4a;color:rgba(255,255,255,.78);}
+body[data-theme="dark"] .inventory-expiry-button.selected,
+body[data-theme="dark"] .inventory-expiry-option.selected,
+body[data-theme="dark"] .inventory-name-suggestion:hover{background:rgba(28,126,214,.22);color:#74c0fc;}
 body[data-theme="dark"] .inventory-header-address.saved{background:rgba(240,120,24,.16);
   border-color:#ff9d43;color:#ffb36b;}
 body[data-theme="dark"] .inventory-address-part,
@@ -2203,6 +2405,8 @@ body.virtual-keyboard-disabled .fixed-bottom-card{
     <button class="menu-item-btn" onclick="closeMenu();openAutoReceive()"><span class="menu-item-icon">⚡</span><span data-i18n="autoReceiveMenu">Автоприем</span></button>
     <button class="menu-item-btn" onclick="closeMenu();openHistory()"><span class="menu-item-icon">🕐</span><span data-i18n="historyMenu">История</span></button>
     <button class="menu-item-btn" onclick="closeMenu();openBase()"><span class="menu-item-icon">🗂️</span><span data-i18n="base">Каталог</span></button>
+    <button class="menu-item-btn" onclick="closeMenu();openTasks()"><span class="menu-item-icon">📋</span><span>Задачи</span></button>
+    <button class="menu-item-btn" onclick="closeMenu();openProfile()"><span class="menu-item-icon">👤</span><span>Профиль</span></button>
     <button class="menu-item-btn" onclick="closeMenu();openImportExportSheet()"><span class="menu-item-icon">🔄</span><span data-i18n="importExportMenu">Импорт / Экспорт</span></button>
     <button class="menu-item-btn" onclick="closeMenu();openSettings()"><span class="menu-item-icon">⚙️</span><span data-i18n="settingsMenu">Настройки</span></button>
     <button class="menu-item-btn" onclick="closeMenu();openInfoStats()"><span class="menu-item-icon">📊</span><span>Инфо</span></button>
@@ -2264,7 +2468,10 @@ body.virtual-keyboard-disabled .fixed-bottom-card{
     </div>
   </div>
   <div class="modal-footer-fixed inventory-footer">
-    <button class="inventory-export-btn" type="button" onclick="openInventoryExport()">📊 Экспорт</button>
+    <div class="inventory-footer-actions">
+      <button class="inventory-import-btn" type="button" onclick="openInventoryImport()">📥 Импорт Excel</button>
+      <button class="inventory-export-btn" type="button" onclick="openInventoryExport()">📊 Экспорт</button>
+    </div>
   </div>
 </div>
 
@@ -2276,6 +2483,178 @@ body.virtual-keyboard-disabled .fixed-bottom-card{
       <button type="button" onclick="closeInventoryAddressPicker()" aria-label="Закрыть">✕</button>
     </div>
     <div class="inventory-address-picker-body" id="inventoryAddressPickerBody"></div>
+  </div>
+</div>
+
+<div class="inventory-expiry-picker-overlay" id="inventoryExpiryPicker"
+  onclick="if(event.target===this)closeInventoryExpiryPicker()">
+  <div class="inventory-expiry-picker">
+    <div class="inventory-expiry-picker-header">
+      <h3 id="inventoryExpiryPickerTitle">Срок годности</h3>
+      <button type="button" onclick="closeInventoryExpiryPicker()" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="inventory-expiry-picker-body" id="inventoryExpiryPickerBody">
+      <div class="inventory-expiry-picker-hint">Год — прокрутите по горизонтали</div>
+      <div class="inventory-expiry-years-wrap">
+        <div class="inventory-expiry-years" id="inventoryExpiryYears" aria-label="Выбор года"></div>
+      </div>
+      <div class="inventory-expiry-lower">
+        <div class="inventory-expiry-months" id="inventoryExpiryMonths" aria-label="Выбор месяца"></div>
+        <div class="inventory-expiry-calendar">
+          <div class="inventory-expiry-calendar-title" id="inventoryExpiryCalendarTitle"></div>
+          <div class="inventory-expiry-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+          <div class="inventory-expiry-days" id="inventoryExpiryDays" aria-label="Выбор дня"></div>
+        </div>
+      </div>
+      <div class="inventory-expiry-status" id="inventoryExpiryPickerStatus"></div>
+    </div>
+    <div class="inventory-expiry-picker-footer">
+      <button class="inventory-expiry-cancel" type="button" onclick="closeInventoryExpiryPicker()">Отмена</button>
+      <button class="inventory-expiry-save" type="button" onclick="saveInventoryExpiryPicker()">Сохранить срок</button>
+    </div>
+  </div>
+</div>
+
+<div class="inventory-name-modal-overlay" id="inventoryUnknownNameModal"
+  aria-hidden="true" onclick="if(event.target===this)closeInventoryUnknownNameModal()">
+  <div class="inventory-name-modal" role="dialog" aria-modal="true"
+    aria-labelledby="inventoryUnknownNameTitle">
+    <div class="inventory-name-modal-header">
+      <h3 id="inventoryUnknownNameTitle">Товар не найден</h3>
+      <button type="button" onclick="closeInventoryUnknownNameModal()" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="inventory-name-modal-body">
+      <div class="inventory-name-modal-text">Введите имя товара, чтобы сохранить его в базе.</div>
+      <div class="inventory-name-modal-barcode" id="inventoryUnknownNameBarcode"></div>
+      <input class="inventory-name-modal-input" id="inventoryUnknownNameInput" type="text"
+        autocomplete="off" autocapitalize="sentences" spellcheck="false"
+        placeholder="Имя товара"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();saveInventoryProductName()}"
+        oninput="var status=document.getElementById('inventoryUnknownNameStatus');if(status)status.textContent=''">
+      <div class="inventory-name-modal-status" id="inventoryUnknownNameStatus" role="status"></div>
+      <div class="inventory-name-modal-actions">
+        <button class="inventory-name-modal-skip" type="button"
+          onclick="closeInventoryUnknownNameModal()">Пропустить</button>
+        <button class="inventory-name-modal-save" type="button"
+          onclick="saveInventoryProductName()">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="inventory-edit-overlay" id="inventoryEditModal"
+  onclick="if(event.target===this)closeInventoryEdit()">
+  <div class="inventory-edit-modal" role="dialog" aria-modal="true" aria-labelledby="inventoryEditTitle">
+    <div class="inventory-edit-header">
+      <h3 id="inventoryEditTitle">Изменить строку</h3>
+      <button type="button" onclick="closeInventoryEdit()" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="inventory-edit-body">
+      <div class="inventory-edit-field">
+        <label for="inventoryEditName">Имя товара</label>
+        <input id="inventoryEditName" type="text" autocomplete="off">
+      </div>
+      <div class="inventory-edit-field">
+        <label for="inventoryEditBarcode">Штрихкод</label>
+        <input id="inventoryEditBarcode" type="text" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="inventory-edit-field">
+        <label for="inventoryEditQuantity">Количество</label>
+        <input id="inventoryEditQuantity" type="number" min="0" max="99999" step="1">
+      </div>
+      <div class="inventory-edit-field">
+        <label for="inventoryEditExpiry">Срок годности</label>
+        <input id="inventoryEditExpiry" type="text" placeholder="ГГГГ, ГГГГ-ММ или ГГГГ-ММ-ДД">
+      </div>
+      <div class="inventory-edit-field">
+        <label>Место хранения</label>
+        <div class="inventory-edit-location">
+          <div class="inventory-edit-field"><label for="inventoryEditWarehouse">Склад</label><input id="inventoryEditWarehouse" type="text"></div>
+          <div class="inventory-edit-field"><label for="inventoryEditRow">Ряд</label><input id="inventoryEditRow" type="text" inputmode="numeric"></div>
+          <div class="inventory-edit-field"><label for="inventoryEditFloor">Этаж</label><input id="inventoryEditFloor" type="text" inputmode="numeric"></div>
+          <div class="inventory-edit-field"><label for="inventoryEditShelf">Полка</label><input id="inventoryEditShelf" type="text" inputmode="numeric"></div>
+        </div>
+      </div>
+      <div class="inventory-edit-status" id="inventoryEditStatus" role="status"></div>
+    </div>
+    <div class="inventory-edit-actions">
+      <button class="inventory-edit-cancel" type="button" onclick="closeInventoryEdit()">Отмена</button>
+      <button class="inventory-edit-save" type="button" onclick="saveInventoryEdit()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="inventory-edit-overlay" id="inventoryAddressEditModal"
+  onclick="if(event.target===this)closeInventoryAddressEdit()">
+  <div class="inventory-edit-modal" role="dialog" aria-modal="true" aria-labelledby="inventoryAddressEditTitle">
+    <div class="inventory-edit-header">
+      <h3 id="inventoryAddressEditTitle">Изменить адрес</h3>
+      <button type="button" onclick="closeInventoryAddressEdit()" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="inventory-edit-body">
+      <div class="inventory-edit-field"><label for="inventoryAddressEditWarehouse">Склад</label><input id="inventoryAddressEditWarehouse" type="text"></div>
+      <div class="inventory-edit-location">
+        <div class="inventory-edit-field"><label for="inventoryAddressEditRow">Ряд</label><input id="inventoryAddressEditRow" type="text" inputmode="numeric"></div>
+        <div class="inventory-edit-field"><label for="inventoryAddressEditFloor">Этаж</label><input id="inventoryAddressEditFloor" type="text" inputmode="numeric"></div>
+        <div class="inventory-edit-field"><label for="inventoryAddressEditShelf">Полка</label><input id="inventoryAddressEditShelf" type="text" inputmode="numeric"></div>
+      </div>
+      <div class="inventory-edit-status" id="inventoryAddressEditStatus" role="status"></div>
+    </div>
+    <div class="inventory-edit-actions">
+      <button class="inventory-edit-cancel" type="button" onclick="closeInventoryAddressEdit()">Отмена</button>
+      <button class="inventory-edit-save" type="button" onclick="saveInventoryAddressEdit()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="inventory-merge-overlay" id="inventoryMergeModal"
+  onclick="if(event.target===this)cancelInventoryMerge()">
+  <div class="inventory-merge-modal" role="dialog" aria-modal="true" aria-labelledby="inventoryMergeTitle">
+    <div class="inventory-merge-icon">↔</div>
+    <h3 id="inventoryMergeTitle">Адрес уже существует</h3>
+    <p id="inventoryMergeText">Объединить товары с этим адресом?</p>
+    <div class="inventory-merge-actions">
+      <button type="button" class="inventory-merge-no" onclick="cancelInventoryMerge()">Нет</button>
+      <button type="button" class="inventory-merge-yes" onclick="confirmInventoryMerge()">Да, объединить</button>
+    </div>
+  </div>
+</div>
+
+<div class="fullscreen-modal" id="inventoryImportModal"
+  onclick="if(event.target===this)closeInventoryImport()">
+  <div class="modal-topbar">
+    <h2>📥 Импорт Excel в строки</h2>
+    <button class="btn-modal-close" onclick="closeInventoryImport()">✕</button>
+  </div>
+  <div class="modal-scroll-body inventory-export-body">
+    <div class="inventory-export-hint">Строки добавятся в выбранное место. Одинаковые товар, срок годности и адрес объединяются в одно количество.</div>
+    <label class="excel-file-label" id="inventoryExcelFileLabel">
+      <span style="font-size:24px;">📂</span>
+      <span id="inventoryExcelFileText">Выбрать файл Excel (.xlsx, .csv)</span>
+      <input type="file" id="inventoryExcelFileInput" accept=".xlsx,.xls,.csv" style="display:none;" onchange="onInventoryExcelFileSelected(this)">
+    </label>
+    <div id="inventoryExcelHeadersPreview" style="display:none;margin:12px 0 0;background:#f8f9fa;border-radius:10px;padding:10px 14px;border:1px solid var(--border);">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Обнаруженные столбцы</div>
+      <div id="inventoryExcelHeadersText" style="font-size:13px;color:var(--text);line-height:1.7;font-family:monospace;"></div>
+    </div>
+    <div id="inventoryExcelMapWrap" style="display:none;">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:14px 0 4px;letter-spacing:.5px;">Настройка столбцов</div>
+      <div class="excel-col-map">
+        <div class="excel-col-row"><div class="excel-col-label">Наименование</div><select class="excel-col-select" id="inventoryExcelMapName"></select></div>
+        <div class="excel-col-row"><div class="excel-col-label">Количество</div><select class="excel-col-select" id="inventoryExcelMapQty"></select></div>
+        <div class="excel-col-row"><div class="excel-col-label">Штрихкод</div><select class="excel-col-select" id="inventoryExcelMapBarcode"></select></div>
+        <div class="excel-col-row"><div class="excel-col-label">Срок годности</div><select class="excel-col-select" id="inventoryExcelMapExpiry"></select></div>
+        <div class="excel-col-row"><div class="excel-col-label">Адрес (необязательно)</div><select class="excel-col-select" id="inventoryExcelMapAddress"></select></div>
+      </div>
+      <div id="inventoryExcelRowPreview" style="margin-top:8px;background:#fff;border-radius:10px;padding:10px 14px;border:1px solid var(--border);font-size:13px;color:var(--text);line-height:1.6;display:none;">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Предпросмотр</div>
+        <div id="inventoryExcelRowPreviewText"></div>
+      </div>
+    </div>
+    <div class="inventory-status" id="inventoryImportStatus" role="status" aria-live="polite"></div>
+  </div>
+  <div class="modal-footer-fixed">
+    <button class="inventory-import-btn" id="btnDoInventoryExcelImport" type="button" onclick="processInventoryExcelImport()" style="display:none;">📥 Добавить в сканированные строки</button>
   </div>
 </div>
 
@@ -2488,6 +2867,37 @@ body.virtual-keyboard-disabled .fixed-bottom-card{
     <button class="btn-modal-close" onclick="closeHistory()">✕</button>
   </div>
   <div class="modal-scroll-body" id="historyList"></div>
+</div>
+
+<!-- ═══ TASKS MODAL (Задачи) ═══ -->
+<div class="fullscreen-modal" id="tasksModal">
+  <div class="modal-topbar">
+    <h2>Задачи</h2>
+    <button class="btn-modal-close" onclick="closeTasks()">✕</button>
+  </div>
+  <div class="modal-scroll-body" id="tasksList"></div>
+</div>
+
+<!-- ═══ PROFILE MODAL (Профиль) ═══ -->
+<div class="fullscreen-modal" id="profileModal">
+  <div class="modal-topbar">
+    <h2>Профиль</h2>
+    <button class="btn-modal-close" onclick="closeProfile()">✕</button>
+  </div>
+  <div class="modal-scroll-body">
+    <div style="padding:14px 16px;display:flex;flex-direction:column;gap:2px;">
+      <div class="profile-row"><span class="profile-row-label">Имя</span><span class="profile-row-value" id="profileFirstName">—</span></div>
+      <div class="profile-row"><span class="profile-row-label">Фамилия</span><span class="profile-row-value" id="profileLastName">—</span></div>
+      <div class="profile-row"><span class="profile-row-label">Эмайл</span><span class="profile-row-value" id="profileEmail">—</span></div>
+      <div class="profile-row"><span class="profile-row-label">Логин</span><span class="profile-row-value" id="profileLogin">—</span></div>
+      <div class="profile-row"><span class="profile-row-label">Пароль</span><span class="profile-row-value">••••••••</span></div>
+      <div class="profile-row"><span class="profile-row-label">ID аккаунта</span><span class="profile-row-value" id="profileId" style="font-size:12px;word-break:break-all;">—</span></div>
+    </div>
+    <div style="padding:20px 16px;">
+      <button type="button" onclick="logoutUser()"
+        style="width:100%;padding:13px;border:none;border-radius:12px;background:var(--red,#e03131);color:#fff;font-size:15px;font-weight:700;">Выход</button>
+    </div>
+  </div>
 </div>
 
 <!-- ═══ RECEIVE MODAL (Принять) ═══ -->
@@ -2714,7 +3124,7 @@ body.virtual-keyboard-disabled .fixed-bottom-card{
     <button class="btn-modal-close" onclick="closeInventoryExport()">✕</button>
   </div>
   <div class="modal-scroll-body inventory-export-body">
-    <div class="inventory-export-hint">Выберите дату сканирования</div>
+    <div class="inventory-export-hint">Выберите дату сканирования. Просроченные до 11.2026 будут на отдельном листе.</div>
     <div class="inventory-export-date-list" id="inventoryExportDateList"></div>
     <div class="inventory-status" id="inventoryExportStatus" role="status" aria-live="polite"></div>
   </div>
@@ -3021,8 +3431,8 @@ body.virtual-keyboard-disabled .fixed-bottom-card{
   </div>
   <div class="settings-scroll">
     <!-- Virtual keyboard -->
-    <div class="settings-section-label" data-i18n="settingsInterfaceSection">Интерфейс</div>
-    <div class="settings-group">
+    <div class="settings-section-label" data-i18n="settingsInterfaceSection" style="display:none;">Интерфейс</div>
+    <div class="settings-group" style="display:none;">
       <div class="settings-item" onclick="toggleVirtualKeyboard()">
         <div class="settings-item-icon">⌨️</div>
         <div style="flex:1">
@@ -3048,8 +3458,8 @@ body.virtual-keyboard-disabled .fixed-bottom-card{
     </div>
 
     <!-- External wireless barcode scanner -->
-    <div class="settings-section-label" data-i18n="settingsExternalScannerSection">Внешний сканер</div>
-    <div class="settings-group">
+    <div class="settings-section-label" data-i18n="settingsExternalScannerSection" style="display:none;">Внешний сканер</div>
+    <div class="settings-group" style="display:none;">
       <div class="settings-item" onclick="toggleExternalScanner()">
         <div class="settings-item-icon">📡</div>
         <div style="flex:1">
@@ -3066,8 +3476,8 @@ body.virtual-keyboard-disabled .fixed-bottom-card{
     </div>
 
     <!-- Scanner connected to a computer over the local Wi-Fi network -->
-    <div class="settings-section-label" data-i18n="settingsPcScannerSection">Сканер через Wi‑Fi</div>
-    <div class="pc-scanner-card">
+    <div class="settings-section-label" data-i18n="settingsPcScannerSection" style="display:none;">Сканер через Wi‑Fi</div>
+    <div class="pc-scanner-card" style="display:none;">
       <p class="pc-scanner-intro" data-i18n="settingsPcScannerIntro">
         Введите IP-адрес компьютера, к которому подключён сканер. На компьютере должен работать WebSocket-мост.
       </p>
@@ -3219,7 +3629,7 @@ body.virtual-keyboard-disabled .fixed-bottom-card{
     <!-- Storage -->
     <div class="settings-section-label" data-i18n="settingsStorageSection">Хранилище данных</div>
     <div class="settings-group">
-      <div class="settings-item" onclick="pickProjectFolder()">
+      <div class="settings-item" style="display:none;" onclick="pickProjectFolder()">
         <div class="settings-item-icon">🗄️</div>
         <div style="flex:1">
           <div class="settings-item-title" data-i18n="settingsStorageInfo">Место хранения каталога</div>
@@ -3243,7 +3653,7 @@ body.virtual-keyboard-disabled .fixed-bottom-card{
         </div>
         <div class="settings-item-arrow">›</div>
       </div>
-      <div class="settings-item" onclick="pickPhotoFolder()">
+      <div class="settings-item" style="display:none;" onclick="pickPhotoFolder()">
         <div class="settings-item-icon">📁</div>
         <div style="flex:1">
           <div class="settings-item-title">📷 Папка для фото</div>
@@ -3251,7 +3661,7 @@ body.virtual-keyboard-disabled .fixed-bottom-card{
         </div>
         <div class="settings-item-arrow">›</div>
       </div>
-      <div class="settings-item" onclick="pickInvoiceFolder()">
+      <div class="settings-item" style="display:none;" onclick="pickInvoiceFolder()">
         <div class="settings-item-icon">🧾</div>
         <div style="flex:1">
           <div class="settings-item-title">📄 Папка для накладных</div>
@@ -3259,7 +3669,7 @@ body.virtual-keyboard-disabled .fixed-bottom-card{
         </div>
         <div class="settings-item-arrow">›</div>
       </div>
-      <div class="settings-item" onclick="togglePhotoCleanup()">
+      <div class="settings-item" style="display:none;" onclick="togglePhotoCleanup()">
         <div class="settings-item-icon">🧹</div>
         <div style="flex:1">
           <div class="settings-item-title" data-i18n="settingsPhotoCleanup">Удалять фото старше месяца</div>
@@ -3813,7 +4223,8 @@ async function idbDelete(key, storeName = 'files') {
 let _photoCleanupPromise = null;
 
 function photoCleanupEnabled() {
-  return localStorage.getItem('bi_photo_cleanup_month') === 'true';
+  // Photo cleanup is permanently disabled. Ignore an old saved preference.
+  return false;
 }
 
 function updatePhotoCleanupSetting() {
@@ -3828,14 +4239,8 @@ function updatePhotoCleanupSetting() {
 }
 
 function togglePhotoCleanup() {
-  const enabled = !photoCleanupEnabled();
-  localStorage.setItem('bi_photo_cleanup_month', String(enabled));
+  localStorage.setItem('bi_photo_cleanup_month', 'false');
   updatePhotoCleanupSetting();
-  if (enabled) {
-    cleanupOldProductPhotos().then(count => {
-      if (count) showAlert('Очистка фото', `Удалено фото старше одного месяца: ${count}. Накладные и данные проекта не затронуты.`);
-    }).catch(e => console.warn('photo cleanup failed', e));
-  }
 }
 
 function parseArrivalDate(value) {
@@ -4147,8 +4552,8 @@ let gboardSelectedAlternative = null;
 
 const VIRTUAL_KEYBOARD_KEY = 'bi_virtual_keyboard_enabled';
 function virtualKeyboardEnabled() {
-  // Keep the current experience as the default for existing users.
-  return localStorage.getItem(VIRTUAL_KEYBOARD_KEY) !== 'false';
+  // The custom keyboard is permanently disabled in this build.
+  return false;
 }
 
 function _rememberGboardInputDefaults(input) {
@@ -4209,8 +4614,7 @@ function updateVirtualKeyboardSetting() {
 }
 
 function toggleVirtualKeyboard() {
-  const enabled = !virtualKeyboardEnabled();
-  localStorage.setItem(VIRTUAL_KEYBOARD_KEY, String(enabled));
+  localStorage.setItem(VIRTUAL_KEYBOARD_KEY, 'false');
   updateVirtualKeyboardSetting();
 }
 
@@ -6265,6 +6669,21 @@ async function _commitReceivedItems(items, options = {}) {
   autoBackup();
   try { renderBaseList(database); } catch (e) {}
   try { handleSearch(); } catch (e) {}
+
+  // Сохраняем эту приёмку отдельно на сервере: в свою коллекцию
+  // (blind_receipt / auto_receipt / assignment_receipt) и всегда также в history.
+  if (typeof window.__warehouseSaveToCollection === 'function') {
+    const serverRecord = {
+      batchId, date: batchDate, senderName, orderNumber, receivedAt,
+      positions, totalQty, items: acceptedItems, source: options.source || ''
+    };
+    const targetCollection = options.source || 'history';
+    window.__warehouseSaveToCollection(targetCollection, serverRecord);
+    if (targetCollection !== 'history') {
+      window.__warehouseSaveToCollection('history', serverRecord);
+    }
+  }
+
   return {
     batchId, positions, totalQty, batchDate, acceptedItems, rejectedItems,
     isLinkedReplacement, linkedBatchGroupId, linkedBatchIds
@@ -6291,7 +6710,8 @@ async function _saveAutoReceiveBatch(record, sourceFile, responseText) {
     dateProvided: Boolean(fileDate || parsed.date),
     senderName: parsed.senderName,
     orderNumber: parsed.orderNumber,
-    sourceFileName: sourceFile?.name || record?.name || ''
+    sourceFileName: sourceFile?.name || record?.name || '',
+    source: 'auto_receipt'
   });
 
   // Автоприём не сохраняет фотографии. Исходный документ сохраняется
@@ -7758,7 +8178,8 @@ let _externalScannerLastKeyAt = 0;
 let _externalScannerFirstKeyAt = 0;
 
 function externalScannerEnabled() {
-  return localStorage.getItem(EXTERNAL_SCANNER_KEY) === 'true';
+  // Bluetooth/HID scanners are always accepted; there is no app toggle.
+  return true;
 }
 
 function updateExternalScannerSetting() {
@@ -7773,8 +8194,7 @@ function updateExternalScannerSetting() {
 }
 
 function toggleExternalScanner() {
-  const enabled = !externalScannerEnabled();
-  localStorage.setItem(EXTERNAL_SCANNER_KEY, String(enabled));
+  localStorage.setItem(EXTERNAL_SCANNER_KEY, 'true');
   _externalScannerBuffer = '';
   _externalScannerLastKeyAt = 0;
   _externalScannerFirstKeyAt = 0;
@@ -8135,9 +8555,15 @@ async function _handlePcScannerMessage(data) {
 
 // Restore a saved Wi-Fi connection after the page is ready.
 function initPcScanner() {
-  const settings = getPcScannerSettings();
-  loadPcScannerSettings();
-  if (settings.enabled && settings.ip) setTimeout(connectPcScanner, 250);
+  // Wi-Fi scanner is intentionally disabled and hidden in this build.
+  // Keep the old settings for backward compatibility, but never reconnect.
+  _pcScannerManualClose = true;
+  clearTimeout(_pcScannerReconnectTimer);
+  _pcScannerReconnectTimer = null;
+  if (_pcScannerSocket && _pcScannerSocket.readyState < WebSocket.CLOSING) {
+    _pcScannerSocket.close();
+  }
+  _pcScannerSocket = null;
 }
 
 /* ══════════════════════════════════════════════
@@ -8306,12 +8732,14 @@ function loadInventoryData() {
 
 function saveInventoryData() {
   localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventoryLocations));
+  window.__warehouseCloudMarkDirty?.();
 }
 
 function saveInventoryEvents() {
   // Keep the browser storage bounded even after many years of scanning.
   if (inventoryEvents.length > 100000) inventoryEvents = inventoryEvents.slice(-100000);
   localStorage.setItem(INVENTORY_EVENTS_KEY, JSON.stringify(inventoryEvents));
+  window.__warehouseCloudMarkDirty?.();
 }
 
 function _inventoryProductLocations(ean, name) {
@@ -8340,16 +8768,17 @@ function _inventoryAddressKey(location) {
 
 function _inventoryLocationLabel(location) {
   if (!location) return '';
-  return location.floor
-    ? `${location.warehouse}-${location.row}-${location.floor}-${location.shelf}`
-    : `${location.warehouse}-${location.row}-${location.shelf}`;
+  // Only join parts that actually have a value — this avoids runs like
+  // "-----" when a segment is empty or a placeholder such as "--".
+  return [location.warehouse, location.row, location.floor, location.shelf]
+    .map((value) => String(value ?? '').trim())
+    .filter((value) => value && !/^-+$/.test(value))
+    .join('-');
 }
 
 function _inventoryQrValue(location) {
   if (!location) return '';
-  if (location.floor) {
-    return `СКЛАД${location.warehouse}-РЯД${location.row}-ЭТАЖ${location.floor}-ПОЛКА${location.shelf}`;
-  }
+  // The QR payload is exactly the same address text shown in the row.
   return _inventoryLocationLabel(location);
 }
 
@@ -9261,7 +9690,8 @@ function _inventoryAddExportSummary(summary, item, location, quantity, firstSeen
   const address = _inventoryLocationLabel(location);
   const barcode = String(item?.barcode || '');
   const name = String(item?.name || '—');
-  const key = `${address}|${barcode}|${name}`;
+  const expiry = String(item?.expiry || '');
+  const key = `${address}|${barcode}|${name}|${expiry}`;
   const old = summary.get(key);
   if (old) {
     old.quantity += Number(quantity) || 0;
@@ -9277,6 +9707,7 @@ function _inventoryAddExportSummary(summary, item, location, quantity, firstSeen
     address,
     barcode,
     name,
+    expiry,
     quantity: Number(quantity) || 0,
     firstSeen: Number(firstSeen) || Date.now(),
     lastSeen: Number(lastSeen) || 0
@@ -9317,10 +9748,16 @@ function renderInventoryExportDateList() {
     list.innerHTML = '<div class="inventory-empty">Нет дат сканирования</div>';
     return;
   }
-  if (!dates.some(item => item.date === inventoryExportSelectedDate)) {
-    inventoryExportSelectedDate = dates[0].date;
+  if (inventoryExportSelectedDate && !dates.some(item => item.date === inventoryExportSelectedDate)) {
+    inventoryExportSelectedDate = '';
   }
-  list.innerHTML = dates.map(item => {
+  var allSelected = !inventoryExportSelectedDate;
+  list.innerHTML = `<button class="inventory-export-date-row${allSelected ? ' selected' : ''}"
+      type="button" onclick="selectInventoryExportDate('')">
+      <span class="inventory-export-date-check" aria-hidden="true"></span>
+      <span class="inventory-export-date-name">Все данные</span>
+      <span class="inventory-export-date-count">${inventoryEvents.length} скан.</span>
+    </button>` + dates.map(item => {
     const selected = item.date === inventoryExportSelectedDate;
     const displayDate = item.date.split('-').reverse().join('.');
     return `<button class="inventory-export-date-row${selected ? ' selected' : ''}"
@@ -9396,6 +9833,7 @@ function exportInventoryExcel() {
     'Адрес': row.address,
     'Штрихкод': row.barcode,
     'Товар': row.name,
+    'Срок годности': row.expiry,
     'Количество': row.quantity,
     'Первое сканирование': _inventoryDateTime(row.firstSeen),
     'Последнее сканирование': _inventoryDateTime(row.lastSeen)
@@ -9404,18 +9842,19 @@ function exportInventoryExcel() {
     'Дата и время': _inventoryDateTime(event.timestamp),
     'Адрес': event.address || _inventoryLocationLabel(event),
     'Штрихкод': event.barcode || '',
-    'Товар': event.name || '—'
+    'Товар': event.name || '—',
+    'Срок годности': event.expiry || ''
   }));
 
   const workbook = window.XLSX.utils.book_new();
   const summarySheet = window.XLSX.utils.json_to_sheet(summarySheetRows);
   summarySheet['!cols'] = [
-    {wch:18}, {wch:18}, {wch:8}, {wch:9}, {wch:9}, {wch:12}, {wch:18}, {wch:34}, {wch:12}, {wch:22}, {wch:22}
+    {wch:18}, {wch:18}, {wch:8}, {wch:9}, {wch:9}, {wch:12}, {wch:18}, {wch:34}, {wch:18}, {wch:12}, {wch:22}, {wch:22}
   ];
   window.XLSX.utils.book_append_sheet(workbook, summarySheet, 'Инвентаризация');
   if (eventSheetRows.length) {
     const eventSheet = window.XLSX.utils.json_to_sheet(eventSheetRows);
-    eventSheet['!cols'] = [{wch:22}, {wch:12}, {wch:18}, {wch:34}];
+    eventSheet['!cols'] = [{wch:22}, {wch:12}, {wch:18}, {wch:34}, {wch:18}];
     window.XLSX.utils.book_append_sheet(workbook, eventSheet, 'Сканирования');
   }
   const suffix = range.fromValue || range.toValue
@@ -9456,50 +9895,23 @@ function printInventoryAddressLabel(location = inventoryCurrentLocation) {
     _inventorySetStatus(t('inventoryNoLocation'), true);
     return;
   }
-  if (typeof QRCode === 'undefined') {
-    alert(t('inventoryPrintUnavailable'));
-    return;
-  }
   const label = _inventoryLocationLabel(location);
   const qrValue = _inventoryQrValue(location);
   renderInventoryQrPreview(location);
-  const qr = document.getElementById('inventoryPrintQr');
-  const printLocation = document.getElementById('inventoryPrintLocation');
-  if (!qr || !printLocation) return;
-  qr.innerHTML = '';
-  printLocation.textContent = label;
-  new QRCode(qr, {
-    text: qrValue, width:200, height:200, colorDark:'#111111', colorLight:'#ffffff',
-    correctLevel: QRCode.CorrectLevel.M
-  });
 
-  // Open the print document immediately from the user's click. This avoids
-  // browsers that print the hidden application page as a blank sheet.
+  // Build the QR image directly (no async local-library rendering to wait
+  // on) so the print window never gets stuck on "Подготовка QR-кода".
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=' +
+    encodeURIComponent(qrValue);
+  const safeLabel = _escapeHtml(label);
+  const safeQrUrl = _escapeHtml(qrUrl);
+
   const printWindow = window.open('', '_blank', 'width=600,height=700');
-  if (printWindow) {
-    printWindow.document.write('<!doctype html><html><head><title>Адрес хранения</title></head><body><p>Подготовка печати…</p></body></html>');
-    printWindow.document.close();
+  if (!printWindow) {
+    alert(t('inventoryPrintUnavailable'));
+    return;
   }
-
-  // qrcodejs can finish inserting the canvas/image asynchronously. Wait for
-  // the actual node before putting it into the standalone print document.
-  let attempts = 0;
-  const waitForQr = () => {
-    const ready = qr.querySelector('canvas, img');
-    if (ready || attempts++ >= 30) {
-      if (!ready) {
-        printWindow?.close();
-        alert(t('inventoryPrintUnavailable'));
-        return;
-      }
-      const qrSource = ready.tagName.toLowerCase() === 'canvas'
-        ? ready.toDataURL('image/png')
-        : ready.src;
-      const safeLabel = _escapeHtml(label);
-      const safeQrSource = _escapeHtml(qrSource || '');
-      if (printWindow && !printWindow.closed) {
-        printWindow.document.open();
-        printWindow.document.write(`<!doctype html>
+  printWindow.document.write(`<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -9512,7 +9924,7 @@ function printInventoryAddressLabel(location = inventoryCurrentLocation) {
     .label{min-height:calc(100vh - 2cm);display:flex;flex-direction:column;
       align-items:center;justify-content:center;gap:14px;text-align:center}
     .caption{font-size:14pt;font-weight:600;color:#444}
-    .qr{display:block;width:5cm;height:5cm;object-fit:contain;image-rendering:pixelated}
+    .qr{display:block;width:5cm;height:5cm;object-fit:contain}
     .location{font-size:34pt;line-height:1.1;font-weight:900;letter-spacing:3px;
       overflow-wrap:anywhere}
     @media print{.label{min-height:0;height:calc(100vh - 2cm)}}
@@ -9521,27 +9933,28 @@ function printInventoryAddressLabel(location = inventoryCurrentLocation) {
 <body>
   <main class="label">
     <div class="caption">Адрес хранения</div>
-    <img class="qr" src="${safeQrSource}" alt="QR-код адреса">
+    <img class="qr" src="${safeQrUrl}" alt="QR-код адреса">
     <div class="location">${safeLabel}</div>
   </main>
-</body>
-</html>`);
-        printWindow.document.close();
-        setTimeout(() => {
-          if (!printWindow.closed) {
-            printWindow.focus();
-            printWindow.print();
-          }
-        }, 180);
-      } else {
-        // Fallback if the browser blocks a new print window.
+  <script>
+    (function () {
+      var qr = document.querySelector('.qr');
+      var printed = false;
+      function go() {
+        if (printed) return;
+        printed = true;
+        window.focus();
         window.print();
       }
-      return;
-    }
-    setTimeout(waitForQr, 50);
-  };
-  waitForQr();
+      qr.addEventListener('load', go);
+      qr.addEventListener('error', go);
+      if (qr.complete) go();
+      setTimeout(go, 1800);
+    })();
+  <\/script>
+</body>
+</html>`);
+  printWindow.document.close();
 }
 
 /* ══════════════════════════════════════════════
@@ -9678,9 +10091,8 @@ function updateStorageSubtitle() {
   const total = database.length;
   const arrLen = arrivals.length;
   const sub = document.getElementById('settingsStorageSub');
-  if (sub) sub.textContent = _projectDirHandle
-    ? `Папка проекта «${_projectDirHandle.name}» · ${total} товаров · ${arrLen} записей`
-    : `IndexedDB + LocalStorage · ${total} товаров · ${arrLen} записей`;
+  if (sub) sub.textContent =
+    `Firebase + LocalStorage · ${total} товаров · ${arrLen} записей`;
   updateFolderSubtitles();
 }
 
@@ -9827,8 +10239,9 @@ async function restoreUserFolders() {
     if (ih && ih.kind === 'directory') { _invoiceDirHandle = ih; await _ensurePermission(_invoiceDirHandle, 'readwrite'); }
     if (phj && phj.kind === 'directory') {
       _projectDirHandle = phj;
-      const permitted = await _ensurePermission(_projectDirHandle, 'readwrite');
-      if (permitted) await loadProjectFromFolder();
+      // Project folders are no longer a database source. The catalog and
+      // history now come from the Firebase/local-first sync layer.
+      await _ensurePermission(_projectDirHandle, 'readwrite');
     }
     if (arh && arh.kind === 'directory') {
       _autoReceiveDirHandle = arh;
@@ -10681,6 +11094,12 @@ function processDbImport() {
   renderBaseList(database);
   handleSearch();
 
+  if (addedDb > 0 && typeof window.__warehouseSaveToCollection === 'function') {
+    window.__warehouseSaveToCollection('catalog', {
+      action: 'import', addedDb, addedArr
+    });
+  }
+
   const st = document.getElementById('dbImportStatus');
   st.textContent = `✅ Товаров добавлено: ${addedDb}, записей истории: ${addedArr}`;
   st.className = 'modal-status ok';
@@ -10729,6 +11148,10 @@ function processExcelPayload() {
   localStorage.setItem('my_off_db', JSON.stringify(database));
   localStorage.setItem('my_off_arr6', JSON.stringify(arrivals));
   autoBackup();
+  if (typeof window.__warehouseSaveToCollection === 'function') {
+    window.__warehouseSaveToCollection('catalog', { action: 'excel_import', count, names: addedNames });
+    window.__warehouseSaveToCollection('history', { batchId, date: batchDate, positions: count, items: addedNames, source: 'catalog' });
+  }
   showImportStatus(`${t('imported')} ${count} ${t('items')}`, true);
   document.getElementById('excelInput').value = '';
   renderBaseList(database);
@@ -10750,6 +11173,89 @@ function openHistory() {
 }
 function _doCloseHistory() { document.getElementById('historyModal').classList.remove('open'); }
 function closeHistory() { _doCloseHistory(); }
+
+/* ══════════════════════════════════════════════
+   TASKS MODAL (Задачи) — задачи от admin.html,
+   читаются из Firestore-коллекции tasks_{uid}
+══════════════════════════════════════════════ */
+function openTasks() {
+  renderTasksList(window.__warehouseTasks || []);
+  document.getElementById('tasksModal').classList.add('open');
+}
+function closeTasks() { document.getElementById('tasksModal').classList.remove('open'); }
+
+function renderTasksList(tasks) {
+  const box = document.getElementById('tasksList');
+  if (!box) return;
+  if (!Array.isArray(tasks) || !tasks.length) {
+    box.innerHTML = `<div class="empty-hint">Нет задач</div>`;
+    return;
+  }
+  box.innerHTML = '';
+  tasks.forEach(task => {
+    const row = document.createElement('div');
+    row.className = 'profile-row';
+    row.style.flexDirection = 'column';
+    row.style.alignItems = 'flex-start';
+    const done = task.status === 'done' || task.status === 'completed';
+    row.innerHTML = `
+      <div style="display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px;">
+        <span style="font-weight:700;">${_escapeHtml(task.title || task.name || 'Без названия')}</span>
+        <button type="button" data-task-id="${_escapeHtml(task.id)}"
+          style="flex-shrink:0;border:0;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;
+          background:${done ? 'var(--green,#2b8a3e)' : 'var(--blue,#1c7ed6)'};color:#fff;">
+          ${done ? '✓ Выполнено' : 'Отметить выполненной'}
+        </button>
+      </div>
+      ${task.description ? `<div style="font-size:13px;color:var(--muted,#888);margin-top:4px;">${_escapeHtml(task.description)}</div>` : ''}
+    `;
+    const btn = row.querySelector('button');
+    if (!done && btn) {
+      btn.onclick = async () => {
+        btn.disabled = true;
+        const ok = await window.__warehouseUpdateTask(task.id, { status: 'done' });
+        if (!ok) btn.disabled = false;
+      };
+    }
+    box.appendChild(row);
+  });
+}
+window.onWarehouseTasksUpdate = function (tasks) {
+  if (document.getElementById('tasksModal')?.classList.contains('open')) {
+    renderTasksList(tasks);
+  }
+};
+
+/* ══════════════════════════════════════════════
+   PROFILE MODAL (Профиль)
+══════════════════════════════════════════════ */
+function openProfile() {
+  renderProfile(window.__warehouseUser);
+  document.getElementById('profileModal').classList.add('open');
+}
+function closeProfile() { document.getElementById('profileModal').classList.remove('open'); }
+
+function renderProfile(user) {
+  if (!user) return;
+  document.getElementById('profileFirstName').textContent = user.firstName || '—';
+  document.getElementById('profileLastName').textContent = user.lastName || '—';
+  document.getElementById('profileEmail').textContent = user.email || '—';
+  document.getElementById('profileLogin').textContent = user.email || '—';
+  document.getElementById('profileId').textContent = user.uid || '—';
+}
+window.onWarehouseUserReady = function (user) {
+  if (document.getElementById('profileModal')?.classList.contains('open')) {
+    renderProfile(user);
+  }
+};
+
+function logoutUser() {
+  if (typeof window.__warehouseLogout === 'function') {
+    window.__warehouseLogout();
+  } else {
+    window.location.href = 'index.html';
+  }
+}
 
 function renderHistoryList() {
   const box = document.getElementById('historyList');
@@ -11038,7 +11544,8 @@ async function parsePastedList() {
         dateProvided: _receiveDateProvided,
         senderName: _receiveSenderName,
         orderNumber: _receiveOrderNumber,
-        receivedAt: _receiveDateTime
+        receivedAt: _receiveDateTime,
+        source: 'blind_receipt'
       });
       recvPendingItems = [];
       renderRecvList();
@@ -11305,7 +11812,8 @@ async function saveReceiveBatch() {
       dateProvided: true,
       senderName: _receiveSenderName,
       orderNumber,
-      receivedAt: _receiveDateTime
+      receivedAt: _receiveDateTime,
+      source: 'blind_receipt'
     });
     closeReceiveSaveModal();
     _pendingRecvItems = [];
@@ -11555,7 +12063,8 @@ async function saveAttachments() {
         dateProvided: _receiveDateProvided,
         senderName: _receiveSenderName,
         orderNumber: _receiveOrderNumber,
-        receivedAt: _receiveDateTime
+        receivedAt: _receiveDateTime,
+        source: 'blind_receipt'
       });
       _pendingRecvItems = [];
       recvPendingItems = [];
@@ -12083,11 +12592,60 @@ async function startResetFlow() {
 /* ══════════════════════════════════════════════
    AUTO BACKUP
 ══════════════════════════════════════════════ */
+function _warehouseReadLocalJson(key, fallback) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key) || '');
+    return value ?? fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+// Firebase is the online source of truth, while these browser values remain
+// the immediate offline cache. The cloud module at the end of this file calls
+// these two public hooks without needing access to this script's local scope.
+function _warehouseCloudSnapshot() {
+  return {
+    database: Array.isArray(database) ? database : [],
+    arrivals: Array.isArray(arrivals) ? arrivals : [],
+    inventoryLocations: _warehouseReadLocalJson('bi_inventory_locations_v1', {}),
+    inventoryEvents: _warehouseReadLocalJson('bi_inventory_scan_events_v1', []),
+    inventoryCurrent: _warehouseReadLocalJson('bi_inventory_current_location_v1', null)
+  };
+}
+
+function _warehouseApplyCloudSnapshot(payload) {
+  if (!payload || !Array.isArray(payload.database) || !Array.isArray(payload.arrivals)) return false;
+  database = payload.database.map(normalizeDatabaseItem).filter(Boolean);
+  arrivals = payload.arrivals;
+  localStorage.setItem('my_off_db', JSON.stringify(database));
+  localStorage.setItem('my_off_arr6', JSON.stringify(arrivals));
+  if (payload.inventoryLocations && typeof payload.inventoryLocations === 'object') {
+    localStorage.setItem('bi_inventory_locations_v1', JSON.stringify(payload.inventoryLocations));
+  }
+  if (Array.isArray(payload.inventoryEvents)) {
+    localStorage.setItem('bi_inventory_scan_events_v1', JSON.stringify(payload.inventoryEvents));
+  }
+  if (payload.inventoryCurrent) {
+    localStorage.setItem('bi_inventory_current_location_v1', JSON.stringify(payload.inventoryCurrent));
+  } else {
+    localStorage.removeItem('bi_inventory_current_location_v1');
+  }
+  try { renderBaseList(database); } catch (e) {}
+  try { handleSearch(); } catch (e) {}
+  try { loadInventoryData(); } catch (e) {}
+  try { window.dispatchEvent(new CustomEvent('warehouse-cloud-applied')); } catch (e) {}
+  return true;
+}
+
+window.__warehouseCloudSnapshot = _warehouseCloudSnapshot;
+window.__warehouseApplyCloudSnapshot = _warehouseApplyCloudSnapshot;
+
 function autoBackup() {
   localStorage.setItem('bi_last_backup', new Date().toISOString());
-  // Browser storage remains the fallback; a selected project folder is the
-  // durable source of truth and is updated after every data-changing action.
-  persistProjectToFolder().catch(e => console.warn('project folder backup skipped', e));
+  // Browser storage is the offline cache; Firebase sync is requested
+  // immediately when the network is available and queued when it is not.
+  window.__warehouseCloudMarkDirty?.();
 }
 
 /* ══════════════════════════════════════════════
@@ -12587,7 +13145,8 @@ async function saveBarcodeSession() {
       date: today,
       dateProvided: true,
       orderNumber,
-      sourceFileName: 'barcode scanner'
+      sourceFileName: 'barcode scanner',
+      source: 'assignment_receipt'
     });
     closeBarcodeOrderModal();
     closeBarcodeResults();
@@ -13880,8 +14439,33 @@ document.addEventListener('DOMContentLoaded', function () {
     catalogLoading: false,
     selectedExportDate: '',
     lastScanCode: '',
-    lastScanAt: 0
+    lastScanAt: 0,
+     pendingUnknownBarcode: '',
+    expiryEnabled: false,
+    expiryMode: 'year',
+     expiryYear: Math.max(2016, Math.min(2036, new Date().getFullYear())),
+    expiryMonth: new Date().getMonth() + 1,
+    expiryDay: new Date().getDate(),
+     expiryPickerForScan: false,
+    lastScanned: null
   };
+
+  // Refresh the visible inventory controller when another device's Firebase
+  // update replaces the local-first cache.
+  window.addEventListener('warehouse-cloud-applied', function () {
+    if (!state.ready) return;
+    try {
+      state.locations = safeGet('bi_inventory_locations_v1', {});
+      state.events = safeGet('bi_inventory_scan_events_v1', []);
+      state.current = parseAddress(safeGet('bi_inventory_current_location_v1', null));
+      state.currentKey = state.current ? locationKey(state.current) : '';
+      renderAddressButtons();
+      renderCleanupOptions();
+      renderList();
+    } catch (error) {
+      report('Не удалось обновить инвентаризацию из облака', error);
+    }
+  });
 
   function report(message, error) {
     var text = String(message || 'Ошибка инвентаризации');
@@ -13908,6 +14492,286 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function safeSet(key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (ignore) {}
+  }
+
+  var INVENTORY_EXPIRY_SETTINGS_KEY = 'bi_inventory_expiry_settings_v1';
+  var INVENTORY_EXPIRY_MONTHS = [
+    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+  ];
+
+  function inventoryExpiryDaysInMonth(year, month) {
+    return new Date(Number(year), Number(month), 0).getDate();
+  }
+
+  function inventoryExpiryValue() {
+    var year = Math.max(2016, Math.min(2036, Number(state.expiryYear) || 2016));
+    var month = Math.max(1, Math.min(12, Number(state.expiryMonth) || 1));
+    var day = Math.max(1, Math.min(inventoryExpiryDaysInMonth(year, month),
+      Number(state.expiryDay) || 1));
+    if (state.expiryMode === 'day') {
+      return year + '-' + String(month).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+    }
+    if (state.expiryMode === 'month') {
+      return year + '-' + String(month).padStart(2, '0');
+    }
+    return String(year);
+  }
+
+  function inventoryItemKey(barcode, expiry) {
+    var cleanBarcode = String(barcode || '').replace(/\s/g, '');
+    if (!state.expiryEnabled) return 'EAN:' + cleanBarcode;
+    return 'EAN:' + cleanBarcode + '|EXP:' + String(expiry || 'без-срока');
+  }
+
+  function inventoryExpiryLabel() {
+    var year = Math.max(2016, Math.min(2036, Number(state.expiryYear) || 2016));
+    var month = Math.max(1, Math.min(12, Number(state.expiryMonth) || 1));
+    var day = Math.max(1, Math.min(inventoryExpiryDaysInMonth(year, month),
+      Number(state.expiryDay) || 1));
+    if (state.expiryMode === 'day') {
+      return String(day).padStart(2, '0') + '.' + String(month).padStart(2, '0') + '.' + year;
+    }
+    if (state.expiryMode === 'month') {
+      return String(month).padStart(2, '0') + '. ' + INVENTORY_EXPIRY_MONTHS[month - 1] + ' ' + year;
+    }
+    return year + ' г.';
+  }
+
+  function renderInventoryExpiryUI() {
+    var toggle = document.getElementById('inventoryExpiryToggle');
+    var value = document.getElementById('inventoryExpiryValue');
+    if (toggle) {
+      toggle.classList.toggle('on', !!state.expiryEnabled);
+      toggle.setAttribute('aria-checked', state.expiryEnabled ? 'true' : 'false');
+    }
+    if (value) value.textContent = state.expiryEnabled ? inventoryExpiryLabel() : 'не выбран';
+    ['year', 'month', 'day'].forEach(function (part) {
+      var button = document.getElementById('inventoryExpiry' +
+        part.charAt(0).toUpperCase() + part.slice(1) + 'Button');
+      if (button) {
+        button.classList.toggle('selected', state.expiryMode === part);
+        if (!state.expiryEnabled) {
+          button.textContent = part === 'year' ? '1 — год'
+            : part === 'month' ? '2 — месяц' : '3 — дата';
+        } else if (part === 'year') {
+          button.textContent = String(state.expiryYear) + ' г.';
+        } else if (part === 'month') {
+          button.textContent = String(state.expiryMonth).padStart(2, '0') + '. ' +
+            INVENTORY_EXPIRY_MONTHS[state.expiryMonth - 1];
+        } else {
+          button.textContent = String(state.expiryDay).padStart(2, '0') + '.' +
+            String(state.expiryMonth).padStart(2, '0') + '.' + state.expiryYear;
+        }
+      }
+    });
+  }
+
+  function saveInventoryExpirySettings() {
+    safeSet(INVENTORY_EXPIRY_SETTINGS_KEY, {
+      enabled: !!state.expiryEnabled,
+      mode: state.expiryMode,
+      year: state.expiryYear,
+      month: state.expiryMonth,
+      day: state.expiryDay
+    });
+  }
+
+  function applyInventoryExpiryToLastScanned() {
+    var last = state.lastScanned;
+    if (!last || !state.locations[last.locationKey]) return false;
+    var location = state.locations[last.locationKey];
+    var item = location.items && location.items[last.itemKey];
+    if (!item) return false;
+    var expiry = state.expiryEnabled ? inventoryExpiryValue() : '';
+    var nextKey = inventoryItemKey(item.barcode, expiry);
+    if (nextKey !== last.itemKey) {
+      var target = location.items[nextKey];
+      if (target && target !== item) {
+        target.quantity = Math.min(99999,
+          (Number(target.quantity) || 0) + (Number(item.quantity) || 0));
+        target.lastSeen = Math.max(Number(target.lastSeen) || 0, Number(item.lastSeen) || 0);
+        if (!target.name || target.name === 'База данных недоступна (Наименования товара нет)') {
+          target.name = item.name || target.name;
+        }
+        delete location.items[last.itemKey];
+        item = target;
+      } else {
+        delete location.items[last.itemKey];
+        location.items[nextKey] = item;
+      }
+      last.itemKey = nextKey;
+    }
+    item.expiry = expiry;
+    item.expiryMode = state.expiryEnabled ? state.expiryMode : '';
+    for (var i = state.events.length - 1; i >= 0; i -= 1) {
+      var event = state.events[i];
+      if (String(event && event.address || '') === locationLabel(location)
+        && String(event && event.barcode || '') === String(item.barcode || '')) {
+        event.expiry = expiry;
+        event.expiryMode = item.expiryMode;
+        break;
+      }
+    }
+    saveState();
+    renderList();
+    setDebug(expiry ? 'Срок применён: ' + inventoryExpiryLabel() : 'Срок годности отключён', false);
+    return true;
+  }
+
+  function toggleInventoryExpiry() {
+    state.expiryEnabled = !state.expiryEnabled;
+    saveInventoryExpirySettings();
+    renderInventoryExpiryUI();
+  }
+
+  function closeInventoryExpiryPicker() {
+    var overlay = document.getElementById('inventoryExpiryPicker');
+    if (overlay) overlay.classList.remove('open');
+    state.expiryPickerForScan = false;
+  }
+
+  function setInventoryExpiryPart(part, value) {
+    if (part === 'year') state.expiryYear = Math.max(2016, Math.min(2036, Number(value) || 2016));
+    if (part === 'month') state.expiryMonth = Math.max(1, Math.min(12, Number(value) || 1));
+    if (part === 'day') state.expiryDay = Math.max(1, Math.min(31, Number(value) || 1));
+    if (state.expiryDay > inventoryExpiryDaysInMonth(state.expiryYear, state.expiryMonth)) {
+      state.expiryDay = inventoryExpiryDaysInMonth(state.expiryYear, state.expiryMonth);
+    }
+    state.expiryEnabled = true;
+    updateInventoryExpiryPickerParts();
+  }
+
+  function updateInventoryExpiryPickerStatus() {
+    var status = document.getElementById('inventoryExpiryPickerStatus');
+    if (status) status.textContent = inventoryExpiryLabel();
+  }
+
+  function centerInventoryExpiryYear(year, smooth) {
+    var years = document.getElementById('inventoryExpiryYears');
+    if (!years) return;
+    var buttons = years.querySelectorAll('[data-expiry-year]');
+    var target = null;
+    var targetIndex = 21 + Math.max(0, Math.min(20, Number(year) - 2016));
+    target = buttons[targetIndex];
+    if (!target) return;
+    years.scrollTo({
+      left: target.offsetLeft - (years.clientWidth - target.offsetWidth) / 2,
+      behavior: smooth ? 'smooth' : 'auto'
+    });
+  }
+
+  function updateInventoryExpiryPickerParts() {
+    var months = document.getElementById('inventoryExpiryMonths');
+    var title = document.getElementById('inventoryExpiryCalendarTitle');
+    var days = document.getElementById('inventoryExpiryDays');
+    if (months) {
+      Array.prototype.forEach.call(months.querySelectorAll('[data-expiry-month]'), function (button) {
+        button.classList.toggle('selected', Number(button.getAttribute('data-expiry-month')) === Number(state.expiryMonth));
+      });
+    }
+    if (title) title.textContent = INVENTORY_EXPIRY_MONTHS[state.expiryMonth - 1] + ' ' + state.expiryYear;
+    if (days) {
+      var firstDay = new Date(state.expiryYear, state.expiryMonth - 1, 1).getDay();
+      var offset = (firstDay + 6) % 7;
+      var count = inventoryExpiryDaysInMonth(state.expiryYear, state.expiryMonth);
+      var html = '';
+      for (var blank = 0; blank < offset; blank += 1) {
+        html += '<span class="inventory-expiry-day empty"></span>';
+      }
+      for (var day = 1; day <= count; day += 1) {
+        html += '<button class="inventory-expiry-day' +
+          (day === Number(state.expiryDay) ? ' selected' : '') +
+          '" type="button" data-expiry-day="' + day + '">' + day + '</button>';
+      }
+      days.innerHTML = html;
+      Array.prototype.forEach.call(days.querySelectorAll('[data-expiry-day]'), function (button) {
+        button.onclick = function () {
+          setInventoryExpiryPart('day', button.getAttribute('data-expiry-day'));
+        };
+      });
+    }
+    var yearButtons = document.querySelectorAll('#inventoryExpiryYears [data-expiry-year]');
+    Array.prototype.forEach.call(yearButtons, function (button) {
+      var value = Number(button.getAttribute('data-expiry-year'));
+      var distance = Math.abs(value - Number(state.expiryYear));
+      button.classList.toggle('selected', value === Number(state.expiryYear));
+      button.classList.toggle('near', distance === 1);
+    });
+    updateInventoryExpiryPickerStatus();
+    renderInventoryExpiryUI();
+  }
+
+  function renderInventoryExpiryPicker() {
+    var overlay = document.getElementById('inventoryExpiryPicker');
+    var years = document.getElementById('inventoryExpiryYears');
+    var months = document.getElementById('inventoryExpiryMonths');
+    if (!overlay || !years || !months) return;
+    var yearHtml = '';
+    for (var cycle = 0; cycle < 3; cycle += 1) {
+      for (var year = 2016; year <= 2036; year += 1) {
+        yearHtml += '<button class="inventory-expiry-year" type="button" data-expiry-year="' +
+          year + '">' + year + '</button>';
+      }
+    }
+    years.innerHTML = yearHtml;
+    months.innerHTML = INVENTORY_EXPIRY_MONTHS.map(function (month, index) {
+      return '<button class="inventory-expiry-month" type="button" data-expiry-month="' +
+        (index + 1) + '">' + month + '</button>';
+    }).join('');
+    Array.prototype.forEach.call(months.querySelectorAll('[data-expiry-month]'), function (button) {
+      button.onclick = function () {
+        setInventoryExpiryPart('month', button.getAttribute('data-expiry-month'));
+      };
+    });
+    Array.prototype.forEach.call(years.querySelectorAll('[data-expiry-year]'), function (button) {
+      button.onclick = function () {
+        setInventoryExpiryPart('year', button.getAttribute('data-expiry-year'));
+        centerInventoryExpiryYear(state.expiryYear, true);
+      };
+    });
+    if (!years.dataset.bound) {
+      years.dataset.bound = 'true';
+      var scrollTimer = null;
+      years.addEventListener('scroll', function () {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(function () {
+          var buttons = years.querySelectorAll('[data-expiry-year]');
+          var center = years.scrollLeft + years.clientWidth / 2;
+          var nearest = null;
+          var distance = Infinity;
+          Array.prototype.forEach.call(buttons, function (button) {
+            var buttonCenter = button.offsetLeft + button.offsetWidth / 2;
+            var currentDistance = Math.abs(buttonCenter - center);
+            if (currentDistance < distance) {
+              distance = currentDistance;
+              nearest = button;
+            }
+          });
+          if (!nearest) return;
+          setInventoryExpiryPart('year', nearest.getAttribute('data-expiry-year'));
+          centerInventoryExpiryYear(state.expiryYear, false);
+        }, 90);
+      }, {passive:true});
+    }
+    updateInventoryExpiryPickerParts();
+    centerInventoryExpiryYear(state.expiryYear, false);
+    overlay.classList.add('open');
+  }
+
+  function openInventoryExpiryPicker(part, forScan) {
+    state.expiryPickerForScan = !!forScan;
+    renderInventoryExpiryPicker();
+  }
+
+  function saveInventoryExpiryPicker() {
+    state.expiryEnabled = true;
+    state.expiryMode = 'day';
+    saveInventoryExpirySettings();
+    renderInventoryExpiryUI();
+    if (state.expiryPickerForScan) applyInventoryExpiryToLastScanned();
+    setDebug('Срок применён: ' + inventoryExpiryLabel(), false);
+    closeInventoryExpiryPicker();
   }
 
   function escapeHtml(value) {
@@ -14001,8 +14865,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function locationLabel(location) {
     if (!location) return '';
-    return location.warehouse + '-' + location.row + '-' +
-      (location.floor ? location.floor + '-' : '') + location.shelf;
+    // Only join parts that actually have a value — this avoids runs like
+    // "-----" when a segment is empty or a placeholder such as "--".
+    var parts = [location.warehouse, location.row, location.floor, location.shelf]
+      .map(function (value) { return String(value == null ? '' : value).trim(); })
+      .filter(function (value) { return value && !/^-+$/.test(value); });
+    return parts.join('-');
   }
 
   function locationKey(location) {
@@ -14136,6 +15004,139 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  function closeOtherInventorySwipeRows(except) {
+    var list = document.getElementById('inventoryResults');
+    if (!list) return;
+    Array.prototype.forEach.call(list.querySelectorAll('.inventory-swipe-main.swiped'), function (row) {
+      if (row !== except) {
+        setInventorySwipeOpen(row, false);
+      }
+    });
+  }
+
+  function setInventorySwipeOpen(row, open) {
+    if (!row) return;
+    var wrapper = row.parentElement;
+    var actions = wrapper && wrapper.querySelector('.inventory-swipe-actions');
+    row.classList.toggle('swiped', !!open);
+    if (wrapper) wrapper.classList.toggle('swiped', !!open);
+    if (actions) {
+      actions.style.visibility = open ? 'visible' : 'hidden';
+      actions.style.zIndex = open ? '5' : '0';
+      actions.setAttribute('aria-hidden', open ? 'false' : 'true');
+    }
+  }
+
+  function bindInventorySwipeRows() {
+    var list = document.getElementById('inventoryResults');
+    if (!list) return;
+    Array.prototype.forEach.call(list.querySelectorAll('.inventory-swipe-item'), function (wrapper) {
+      var row = wrapper.querySelector('.inventory-swipe-main');
+      if (!row) return;
+      var startX = 0;
+      var startY = 0;
+      var tracking = false;
+      var moved = false;
+      row.addEventListener('pointerdown', function (event) {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        startX = event.clientX;
+        startY = event.clientY;
+        tracking = true;
+        moved = false;
+        closeOtherInventorySwipeRows(row);
+        if (row.setPointerCapture) {
+          try { row.setPointerCapture(event.pointerId); } catch (ignore) {}
+        }
+        row.style.transition = 'none';
+      });
+      row.addEventListener('pointermove', function (event) {
+        if (!tracking) return;
+        var dx = event.clientX - startX;
+        var dy = event.clientY - startY;
+        if (Math.abs(dy) > Math.abs(dx) && !moved) {
+          tracking = false;
+          row.style.transition = '';
+          return;
+        }
+        if (Math.abs(dx) < 8) return;
+        moved = true;
+        var opened = row.classList.contains('swiped');
+        var base = opened ? -row.getBoundingClientRect().width * .30 : 0;
+        var next = Math.max(-row.getBoundingClientRect().width * .30, Math.min(0, base + dx));
+        row.style.transform = 'translateX(' + next + 'px)';
+      });
+      row.addEventListener('pointerup', function (event) {
+        if (!tracking) return;
+        tracking = false;
+        row.style.transition = '';
+        if (!moved) return;
+        var dx = event.clientX - startX;
+        if (dx < -30 || (row.classList.contains('swiped') && dx < 20)) {
+          closeOtherInventorySwipeRows(row);
+          setInventorySwipeOpen(row, true);
+        } else if (dx > 20) {
+          setInventorySwipeOpen(row, false);
+        }
+        row.style.transform = '';
+      });
+      row.addEventListener('pointercancel', function () {
+        tracking = false;
+        row.style.transition = '';
+        row.style.transform = '';
+        setInventorySwipeOpen(row, false);
+      }, {passive:true});
+      row.addEventListener('click', function () {
+        if (moved) {
+          moved = false;
+          return;
+        }
+        if (row.classList.contains('swiped')) setInventorySwipeOpen(row, false);
+      });
+    });
+  }
+
+  function printInventoryAddressFallback(location) {
+    var label = locationLabel(location);
+    var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=' +
+      encodeURIComponent(label);
+    var printWindow = window.open('', '_blank', 'width=600,height=700');
+    if (!printWindow) {
+      setDebug('Разрешите всплывающие окна для печати QR-кода', true);
+      return false;
+    }
+    var safeLabel = escapeHtml(label);
+    printWindow.document.write('<!doctype html><html lang="ru"><head><meta charset="utf-8">' +
+      '<title>Адрес хранения ' + safeLabel + '</title><style>' +
+      '@page{size:auto;margin:1cm}' +
+      '*{box-sizing:border-box}' +
+      'html,body{margin:0;background:#fff;color:#111}' +
+      'body{font-family:Arial,sans-serif;min-height:100vh;display:flex;' +
+      'align-items:center;justify-content:center}' +
+      '.label{text-align:center}.qr{display:block;width:5cm;height:5cm;margin:0 auto 14px}' +
+      '.location{font-size:34pt;font-weight:900;letter-spacing:3px;overflow-wrap:anywhere}' +
+      '@media print{body{min-height:0}}' +
+      '</style></head><body><main class="label"><img class="qr" src="' + qrUrl +
+      '" alt="QR-код адреса"><div class="location">' + safeLabel +
+      '</div></main><script>var qr=document.querySelector(".qr");' +
+      'function go(){window.focus();window.print();}' +
+      'qr.addEventListener("load",go);setTimeout(go,1800);<\/script></body></html>');
+    printWindow.document.close();
+    return true;
+  }
+
+  function printInventoryAddressFromSwipe(location) {
+    try {
+      if (!location) throw new Error('Адрес не найден');
+      // Generate the QR image directly instead of waiting on the local
+      // library to insert a canvas/img into a detached element — that wait
+      // could stall on "Подготовка QR-кода" and never resolve.
+      return printInventoryAddressFallback(location);
+    } catch (error) {
+      setDebug('Печать QR не сработала', true);
+      return false;
+    }
+  }
+
   function renderList() {
     var list = document.getElementById('inventoryResults');
     if (!list) return;
@@ -14151,25 +15152,77 @@ document.addEventListener('DOMContentLoaded', function () {
       var location = state.locations[key] || {};
       var items = Object.keys(location.items || {});
       if (!items.length) return '';
-       return '<div class="inventory-operation-group">' +
-         '<div class="inventory-operation-address' + (key === state.currentKey ? ' current' : '') + '">' +
-         '<div class="inventory-operation-address-main"><strong>' +
-         escapeHtml(locationLabel(location)) + '</strong></div>' +
-         '<span style="display:flex;align-items:center;gap:6px;flex-shrink:0;">' +
-         '<button class="inventory-operation-delete" type="button" data-inventory-delete-key="' +
-         escapeHtml(key) + '" onclick="deleteInventoryLocation(this.dataset.inventoryDeleteKey,event)" ' +
-         'aria-label="Удалить полку" title="Удалить полку">🗑️</button>' +
-         '<span class="inventory-operation-qr" aria-hidden="true">▦</span></span></div>' +
+      return '<div class="inventory-operation-group">' +
+        '<div class="inventory-swipe-item inventory-address-swipe" data-inventory-address="' + escapeHtml(key) + '">' +
+        '<div class="inventory-swipe-actions" aria-hidden="true">' +
+        '<button class="inventory-swipe-action icon" type="button" data-action="address-edit" aria-label="Изменить адрес" title="Изменить адрес">✎</button>' +
+        '<button class="inventory-swipe-action icon delete" type="button" data-action="address-delete" aria-label="Удалить адрес" title="Удалить адрес">🗑</button>' +
+        '<button class="inventory-swipe-action icon" type="button" data-action="address-print" aria-label="Печать адреса" title="Печать адреса">🖨</button>' +
+        '</div>' +
+        '<div class="inventory-operation-address inventory-swipe-main' + (key === state.currentKey ? ' current' : '') + '">' +
+        '<div class="inventory-operation-address-main"><strong>' +
+        escapeHtml(locationLabel(location)) + '</strong></div></div></div>' +
         '<div class="inventory-operation-items">' +
         items.map(function (itemKey) {
           var item = location.items[itemKey] || {};
-          return '<div class="inventory-result-row"><div><div class="inventory-result-name">' +
+          var rowId = escapeHtml(key + '||' + itemKey);
+          return '<div class="inventory-swipe-item" data-inventory-row="' + rowId + '">' +
+            '<div class="inventory-swipe-actions" aria-hidden="true">' +
+            '<button class="inventory-swipe-action icon edit" type="button" data-action="edit" aria-label="Изменить строку" title="Изменить строку">✎</button>' +
+            '<button class="inventory-swipe-action icon delete" type="button" data-action="delete" aria-label="Удалить строку" title="Удалить строку">🗑</button>' +
+            '</div>' +
+            '<div class="inventory-result-row inventory-swipe-main"><div><div class="inventory-result-name">' +
             escapeHtml(item.name || 'База данных недоступна (Наименования товара нет)') +
-            '</div><div class="inventory-result-meta">' + escapeHtml(item.barcode || '') +
+            '</div><div class="inventory-result-meta">' + escapeHtml(item.barcode || 'Без штрихкода') +
+            (item.expiry ? ' · Срок: ' + escapeHtml(item.expiry) : '') +
             '</div></div><strong class="inventory-result-qty">' +
-            String(Number(item.quantity) || 0) + '</strong></div>';
+            String(Number(item.quantity) || 0) + '</strong></div></div>';
         }).join('') + '</div></div>';
     }).join('') || '<div class="inventory-empty">Список товаров пока пуст</div>';
+    Array.prototype.forEach.call(list.querySelectorAll('.inventory-swipe-item'), function (wrapper) {
+      var addressKeyValue = wrapper.getAttribute('data-inventory-address') || '';
+      if (addressKeyValue) {
+        var addressEdit = wrapper.querySelector('[data-action="address-edit"]');
+        var addressDelete = wrapper.querySelector('[data-action="address-delete"]');
+        var addressPrint = wrapper.querySelector('[data-action="address-print"]');
+        var address = state.locations[addressKeyValue];
+        if (addressEdit) addressEdit.onclick = function (event) {
+          event.preventDefault(); event.stopPropagation();
+          openInventoryAddressEdit(addressKeyValue);
+        };
+        if (addressDelete) addressDelete.onclick = function (event) {
+          event.preventDefault(); event.stopPropagation();
+          deleteInventoryLocation(addressKeyValue, event);
+        };
+        if (addressPrint) addressPrint.onclick = function (event) {
+          event.preventDefault(); event.stopPropagation();
+          if (address) {
+            printInventoryAddressFromSwipe({
+              warehouse:String(address.warehouse || ''),
+              row:String(address.row || '--'),
+              floor:String(address.floor || '--'),
+              shelf:String(address.shelf || '--')
+            });
+          }
+        };
+        return;
+      }
+      var encoded = wrapper.getAttribute('data-inventory-row') || '';
+      var splitAt = encoded.indexOf('||');
+      var locationKeyValue = splitAt >= 0 ? encoded.slice(0, splitAt) : '';
+      var itemKeyValue = splitAt >= 0 ? encoded.slice(splitAt + 2) : '';
+      var editButton = wrapper.querySelector('[data-action="edit"]');
+      var deleteButton = wrapper.querySelector('[data-action="delete"]');
+      if (editButton) editButton.onclick = function (event) {
+        event.preventDefault(); event.stopPropagation();
+        openInventoryEdit(locationKeyValue, itemKeyValue);
+      };
+      if (deleteButton) deleteButton.onclick = function (event) {
+        event.preventDefault(); event.stopPropagation();
+        deleteInventoryItem(locationKeyValue, itemKeyValue, event);
+      };
+    });
+    bindInventorySwipeRows();
   }
 
   function renderCatalogMessage() {
@@ -14194,7 +15247,96 @@ document.addEventListener('DOMContentLoaded', function () {
     for (var i = 0; i < state.catalog.length; i += 1) {
       if (state.catalog[i].ean && state.catalog[i].ean === value) return state.catalog[i];
     }
+    try {
+      var local = JSON.parse(localStorage.getItem('my_off_db') || '[]');
+      for (var j = 0; j < local.length; j += 1) {
+        if (local[j] && String(local[j].ean || '').trim() === value) return normalizeProduct(local[j]);
+      }
+    } catch (ignore) {}
     return null;
+  }
+
+  function hideInventoryNameSuggestions() {
+    var box = document.getElementById('inventoryNameSuggestions');
+    if (box) {
+      box.classList.remove('open');
+      box.innerHTML = '';
+    }
+  }
+
+  function closeInventoryUnknownNameModal() {
+    var overlay = document.getElementById('inventoryUnknownNameModal');
+    if (overlay) {
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+    state.pendingUnknownBarcode = '';
+    var input = document.getElementById('inventoryUnknownNameInput');
+    if (input) input.value = '';
+    var status = document.getElementById('inventoryUnknownNameStatus');
+    if (status) status.textContent = '';
+  }
+
+  function openInventoryUnknownNameModal(barcode) {
+    var overlay = document.getElementById('inventoryUnknownNameModal');
+    var input = document.getElementById('inventoryUnknownNameInput');
+    var barcodeLabel = document.getElementById('inventoryUnknownNameBarcode');
+    var status = document.getElementById('inventoryUnknownNameStatus');
+    state.pendingUnknownBarcode = String(barcode || '').replace(/\s/g, '');
+    if (!overlay) return;
+    if (barcodeLabel) barcodeLabel.textContent = 'EAN: ' + state.pendingUnknownBarcode;
+    if (input) input.value = '';
+    if (status) status.textContent = '';
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    setTimeout(function () {
+      if (input) input.focus();
+    }, 80);
+  }
+
+  function chooseInventoryNameSuggestion(name) {
+    var input = document.getElementById('inventoryProductNameInput');
+    if (input) input.value = String(name || '');
+    hideInventoryNameSuggestions();
+  }
+
+  function handleInventoryNameInput(event) {
+    var input = event && event.target ? event.target : document.getElementById('inventoryProductNameInput');
+    var box = document.getElementById('inventoryNameSuggestions');
+    if (!input || !box) return;
+    var query = String(input.value || '').trim().toLocaleLowerCase('ru-RU');
+    if (query.length < 3) {
+      hideInventoryNameSuggestions();
+      return;
+    }
+    var source = state.catalog.slice();
+    try {
+      var local = JSON.parse(localStorage.getItem('my_off_db') || '[]');
+      source = source.concat(local.map(normalizeProduct).filter(Boolean));
+    } catch (ignore) {}
+    var seen = {};
+    var matches = source.filter(function (item) {
+      var name = String(item && item.name || '').trim();
+      var key = name.toLocaleLowerCase('ru-RU');
+      if (!name || seen[key] || key.indexOf(query) < 0) return false;
+      seen[key] = true;
+      return true;
+    }).slice(0, 8);
+    if (!matches.length) {
+      hideInventoryNameSuggestions();
+      return;
+    }
+    box.innerHTML = matches.map(function (item) {
+      return '<button class="inventory-name-suggestion" type="button" data-inventory-name="' +
+        escapeHtml(item.name) + '">' + escapeHtml(item.name) +
+        (item.ean ? ' · ' + escapeHtml(item.ean) : '') + '</button>';
+    }).join('');
+    Array.prototype.forEach.call(box.querySelectorAll('[data-inventory-name]'), function (button) {
+      button.onclick = function () {
+        chooseInventoryNameSuggestion(button.getAttribute('data-inventory-name'));
+      };
+    });
+    box.classList.add('open');
   }
 
   function loadCatalog() {
@@ -14258,9 +15400,26 @@ document.addEventListener('DOMContentLoaded', function () {
   function loadState() {
     var savedLocations = safeGet('bi_inventory_locations_v1', {});
     var savedEvents = safeGet('bi_inventory_scan_events_v1', []);
+    var savedExpiry = safeGet(INVENTORY_EXPIRY_SETTINGS_KEY, {});
     state.locations = savedLocations && typeof savedLocations === 'object' && !Array.isArray(savedLocations)
       ? savedLocations : {};
     state.events = Array.isArray(savedEvents) ? savedEvents : [];
+    var localCatalog = safeGet('my_off_db', []);
+    if (Array.isArray(localCatalog)) {
+      state.catalog = localCatalog.map(normalizeProduct).filter(Boolean);
+      state.catalogAvailable = state.catalog.length > 0;
+    }
+    if (savedExpiry && typeof savedExpiry === 'object') {
+      state.expiryEnabled = !!savedExpiry.enabled;
+      state.expiryMode = ['year', 'month', 'day'].indexOf(savedExpiry.mode) >= 0
+        ? savedExpiry.mode : state.expiryMode;
+      state.expiryYear = Math.max(2016, Math.min(2036, Number(savedExpiry.year) || state.expiryYear));
+      state.expiryMonth = Math.max(1, Math.min(12, Number(savedExpiry.month) || state.expiryMonth));
+      state.expiryDay = Math.max(1, Math.min(31, Number(savedExpiry.day) || state.expiryDay));
+    }
+    if (state.expiryDay > inventoryExpiryDaysInMonth(state.expiryYear, state.expiryMonth)) {
+      state.expiryDay = inventoryExpiryDaysInMonth(state.expiryYear, state.expiryMonth);
+    }
     state.current = parseAddress(safeGet('bi_inventory_current_location_v1', null));
     state.currentKey = state.current ? locationKey(state.current) : '';
     if (state.current) {
@@ -14271,6 +15430,7 @@ document.addEventListener('DOMContentLoaded', function () {
       };
     }
     renderAddressButtons();
+    renderInventoryExpiryUI();
     renderCleanupOptions();
     renderList();
   }
@@ -14279,6 +15439,12 @@ document.addEventListener('DOMContentLoaded', function () {
     safeSet('bi_inventory_locations_v1', state.locations);
     safeSet('bi_inventory_scan_events_v1', state.events);
     safeSet('bi_inventory_current_location_v1', state.current);
+    saveInventoryExpirySettings();
+    try {
+      inventoryLocations = state.locations;
+      inventoryEvents = state.events;
+    } catch (ignore) {}
+    if (window.__warehouseCloudMarkDirty) window.__warehouseCloudMarkDirty();
   }
 
   function setAddress(location) {
@@ -14306,6 +15472,8 @@ document.addEventListener('DOMContentLoaded', function () {
   function addProduct(code) {
     var value = String(code || '').trim();
     if (!value) return false;
+    var nameModal = document.getElementById('inventoryUnknownNameModal');
+    if (nameModal && nameModal.classList.contains('open')) return false;
     if (!state.current) {
       setDebug('Сначала выберите склад и адрес', true);
       return false;
@@ -14313,7 +15481,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var product = findProduct(value);
     var name = product ? product.name : 'База данных недоступна (Наименования товара нет)';
     var barcode = value.replace(/\s/g, '');
-    var key = 'EAN:' + barcode;
+    var expiry = state.expiryEnabled ? inventoryExpiryValue() : '';
+    var key = inventoryItemKey(barcode, expiry);
     var location = state.locations[state.currentKey];
     if (!location.items) location.items = {};
     var old = location.items[key] || {};
@@ -14321,8 +15490,11 @@ document.addEventListener('DOMContentLoaded', function () {
       barcode:barcode,
       name:name,
       quantity:Math.min(99999, (Number(old.quantity) || 0) + 1),
-      lastSeen:Date.now()
+      lastSeen:Date.now(),
+      expiry:expiry,
+      expiryMode:state.expiryEnabled ? state.expiryMode : ''
     };
+    state.lastScanned = {locationKey:state.currentKey, itemKey:key};
     state.events.push({
       timestamp:Date.now(),
       address:locationLabel(state.current),
@@ -14331,7 +15503,9 @@ document.addEventListener('DOMContentLoaded', function () {
       floor:state.current.floor,
       shelf:state.current.shelf,
       barcode:barcode,
-      name:name
+      name:name,
+      expiry:expiry,
+      expiryMode:state.expiryEnabled ? state.expiryMode : ''
     });
     saveState();
     renderList();
@@ -14339,12 +15513,92 @@ document.addEventListener('DOMContentLoaded', function () {
       input.value = '';
       try { input.focus({preventScroll:true}); } catch (ignore) { input.focus(); }
     }
+    var nameInput = document.getElementById('inventoryProductNameInput');
+    if (nameInput) nameInput.value = product ? name : '';
+    hideInventoryNameSuggestions();
     setDebug(name + ' · количество: ' + location.items[key].quantity, !product);
+    if (!product) {
+      openInventoryUnknownNameModal(barcode);
+    } else {
+      openInventoryExpiryPicker('day', true);
+    }
+    return true;
+  }
+
+  function saveInventoryProductName() {
+    var unknownModal = document.getElementById('inventoryUnknownNameModal');
+    var modalIsOpen = unknownModal && unknownModal.classList.contains('open');
+    var input = document.getElementById(modalIsOpen
+      ? 'inventoryUnknownNameInput' : 'inventoryProductNameInput');
+    var name = String(input && input.value || '').trim();
+    var last = state.lastScanned;
+    var location = last && state.locations[last.locationKey];
+    var item = location && location.items && location.items[last.itemKey];
+    var barcode = String((item && item.barcode) || state.pendingUnknownBarcode || '').replace(/\s/g, '');
+    if (!barcode) {
+      setDebug('Сначала отсканируйте EAN', true);
+      return false;
+    }
+    if (!name) {
+      var modalStatus = document.getElementById('inventoryUnknownNameStatus');
+      if (modalStatus && document.getElementById('inventoryUnknownNameModal')?.classList.contains('open')) {
+        modalStatus.textContent = 'Введите имя товара';
+      }
+      setDebug('Введите имя товара', true);
+      return false;
+    }
+    var found = -1;
+    for (var i = 0; i < database.length; i += 1) {
+      if (String(database[i] && database[i].ean || '').replace(/\s/g, '') === barcode) {
+        found = i;
+        break;
+      }
+    }
+    if (found >= 0) {
+      database[found] = Object.assign({}, database[found], {ean:barcode, name:name});
+    } else {
+      database.push({ean:barcode, artikel:'', name:name});
+    }
+    state.catalog = state.catalog.filter(function (product) {
+      return String(product.ean || '').replace(/\s/g, '') !== barcode;
+    });
+    state.catalog.push({ean:barcode, artikel:'', name:name});
+    state.catalogAvailable = true;
+    Object.keys(state.locations).forEach(function (locationKeyValue) {
+      var locationValue = state.locations[locationKeyValue];
+      Object.keys(locationValue && locationValue.items || {}).forEach(function (itemKey) {
+        var stored = locationValue.items[itemKey];
+        if (String(stored && stored.barcode || '').replace(/\s/g, '') === barcode) {
+          stored.name = name;
+        }
+      });
+    });
+    for (var j = 0; j < state.events.length; j += 1) {
+      if (String(state.events[j] && state.events[j].barcode || '').replace(/\s/g, '') === barcode) {
+        state.events[j].name = name;
+      }
+    }
+    try { localStorage.setItem('my_off_db', JSON.stringify(database)); } catch (ignore) {}
+    saveState();
+    if (typeof autoBackup === 'function') autoBackup();
+    try { renderBaseList(database); } catch (ignoreBase) {}
+    try { handleSearch(); } catch (ignoreSearch) {}
+    try { updateInventoryProductOptions(); } catch (ignoreOptions) {}
+    if (input) input.value = name;
+    var inlineNameInput = document.getElementById('inventoryProductNameInput');
+    if (inlineNameInput) inlineNameInput.value = name;
+    hideInventoryNameSuggestions();
+    renderList();
+    setDebug('Товар сохранён: ' + name + ' · EAN ' + barcode, false);
+    closeInventoryUnknownNameModal();
+    openInventoryExpiryPicker('day', true);
     return true;
   }
 
   function handleScan(code) {
     try {
+      var nameModal = document.getElementById('inventoryUnknownNameModal');
+      if (nameModal && nameModal.classList.contains('open')) return false;
       var signature = String(code || '').trim();
       var now = Date.now();
       if (signature && signature === state.lastScanCode && now - state.lastScanAt < 500) return;
@@ -14404,6 +15658,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   window.closeInventory = function () {
     try {
+      closeInventoryExpiryPicker();
+      closeInventoryUnknownNameModal();
+      closeInventoryEdit();
+      closeInventoryAddressEdit();
+      cancelInventoryMerge();
+      closeInventoryImport();
+      hideInventoryNameSuggestions();
       if (modal) {
         modal.classList.remove('open', 'active');
         modal.style.display = 'none';
@@ -14419,6 +15680,26 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addInventoryProductFromInput = function () {
     try { addProduct(input && input.value); } catch (error) { report('Ошибка добавления EAN', error); }
   };
+  window.toggleInventoryExpiry = toggleInventoryExpiry;
+  window.openInventoryExpiryPicker = openInventoryExpiryPicker;
+  window.closeInventoryExpiryPicker = closeInventoryExpiryPicker;
+  window.saveInventoryExpiryPicker = saveInventoryExpiryPicker;
+  window.handleInventoryNameInput = handleInventoryNameInput;
+  window.saveInventoryProductName = saveInventoryProductName;
+  window.openInventoryUnknownNameModal = openInventoryUnknownNameModal;
+  window.closeInventoryUnknownNameModal = closeInventoryUnknownNameModal;
+  window.openInventoryEdit = openInventoryEdit;
+  window.closeInventoryEdit = closeInventoryEdit;
+  window.saveInventoryEdit = saveInventoryEdit;
+  window.openInventoryAddressEdit = openInventoryAddressEdit;
+  window.closeInventoryAddressEdit = closeInventoryAddressEdit;
+  window.saveInventoryAddressEdit = saveInventoryAddressEdit;
+  window.cancelInventoryMerge = cancelInventoryMerge;
+  window.confirmInventoryMerge = confirmInventoryMerge;
+  window.openInventoryImport = openInventoryImport;
+  window.closeInventoryImport = closeInventoryImport;
+  window.onInventoryExcelFileSelected = onInventoryExcelFileSelected;
+  window.processInventoryExcelImport = processInventoryExcelImport;
   window.__warehouseInventoryHandleScan = handleScan;
 
   window.openInventoryCamera = function () {
@@ -14523,10 +15804,500 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!location) return false;
     return deleteScope('shelf', parseAddress(location) || location);
   };
+  window.deleteInventoryItem = async function (locationKeyValue, itemKey, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    var location = state.locations[String(locationKeyValue || '')];
+    var item = location && location.items && location.items[String(itemKey || '')];
+    if (!location || !item) return false;
+    var details = (item.name || 'Товар') + ' · EAN ' + (item.barcode || '—') +
+      ' · количество: ' + (Number(item.quantity) || 0);
+    var confirmed = typeof showConfirm === 'function'
+      ? await showConfirm('🗑️', 'Удалить строку товара?', details, 'Удалить', 'Отмена')
+      : window.confirm('Удалить строку товара?\n' + details);
+    if (!confirmed) return false;
+
+    delete location.items[String(itemKey || '')];
+    var address = locationLabel(location);
+    var barcode = String(item.barcode || '');
+    var expiry = String(item.expiry || '');
+    state.events = state.events.filter(function (scan) {
+      return !(String(scan && scan.address || '') === address &&
+        String(scan && scan.barcode || '') === barcode &&
+        String(scan && scan.expiry || '') === expiry);
+    });
+    if (state.lastScanned &&
+        state.lastScanned.locationKey === String(locationKeyValue || '') &&
+        state.lastScanned.itemKey === String(itemKey || '')) {
+      state.lastScanned = null;
+    }
+    saveState();
+    renderCleanupOptions();
+    renderList();
+    setDebug('Удалена строка: ' + (item.name || 'Товар'), false);
+    return true;
+  };
   window.saveInventoryWarehouseFromPicker = function () {
     var button = document.getElementById('inventoryWarehousePickerSave');
     if (button) button.click();
   };
+
+  state.addressEditTarget = null;
+  state.pendingAddressMerge = null;
+
+  function openInventoryAddressEdit(locationKeyValue) {
+    var location = state.locations[String(locationKeyValue || '')];
+    if (!location) return false;
+    state.addressEditTarget = String(locationKeyValue);
+    var address = copyLocation(location);
+    var values = {
+      inventoryAddressEditWarehouse:address.warehouse || '',
+      inventoryAddressEditRow:address.row || '--',
+      inventoryAddressEditFloor:address.floor || '--',
+      inventoryAddressEditShelf:address.shelf || '--'
+    };
+    Object.keys(values).forEach(function (id) {
+      var field = document.getElementById(id);
+      if (field) field.value = values[id];
+    });
+    var status = document.getElementById('inventoryAddressEditStatus');
+    if (status) status.textContent = '';
+    var overlay = document.getElementById('inventoryAddressEditModal');
+    if (overlay) overlay.classList.add('open');
+    return true;
+  }
+
+  function closeInventoryAddressEdit() {
+    var overlay = document.getElementById('inventoryAddressEditModal');
+    if (overlay) overlay.classList.remove('open');
+    state.addressEditTarget = null;
+  }
+
+  function commitInventoryAddressEdit(sourceKey, nextLocation) {
+    var source = state.locations[String(sourceKey || '')];
+    if (!source || !nextLocation) return false;
+    var nextKey = locationKey(nextLocation);
+    var destination = state.locations[nextKey];
+    if (!destination) {
+      destination = Object.assign({}, nextLocation, {items:{}});
+      state.locations[nextKey] = destination;
+    }
+    destination.items = destination.items || {};
+    Object.keys(source.items || {}).forEach(function (itemKey) {
+      var sourceItem = source.items[itemKey];
+      var targetKey = inventoryRowKey(sourceItem.barcode, sourceItem.expiry, sourceItem.name);
+      var targetItem = destination.items[targetKey] || destination.items[itemKey];
+      if (targetItem && destination !== source) {
+        targetItem.quantity = Math.min(99999, (Number(targetItem.quantity) || 0) +
+          (Number(sourceItem.quantity) || 0));
+        if (!targetItem.name || targetItem.name.indexOf('База данных') === 0) targetItem.name = sourceItem.name;
+        targetItem.lastSeen = Math.max(Number(targetItem.lastSeen) || 0, Number(sourceItem.lastSeen) || 0);
+      } else if (destination !== source) {
+        destination.items[targetKey] = sourceItem;
+      }
+    });
+    var oldLabel = locationLabel(source);
+    var newLabel = locationLabel(nextLocation);
+    state.events.forEach(function (event) {
+      if (String(event && event.address || '') !== oldLabel) return;
+      event.address = newLabel;
+      event.warehouse = nextLocation.warehouse;
+      event.row = nextLocation.row;
+      event.floor = nextLocation.floor;
+      event.shelf = nextLocation.shelf;
+    });
+    if (state.currentKey === String(sourceKey)) {
+      state.current = copyLocation(nextLocation);
+      state.currentKey = nextKey;
+      safeSet('bi_inventory_current_location_v1', state.current);
+      renderAddressButtons();
+    }
+    if (nextKey !== String(sourceKey)) delete state.locations[String(sourceKey)];
+    saveState();
+    renderCleanupOptions();
+    renderList();
+    setDebug('Адрес изменён: ' + newLabel, false);
+    return true;
+  }
+
+  function showInventoryMergeQuestion(sourceKey, nextLocation) {
+    var source = state.locations[String(sourceKey || '')];
+    var destination = state.locations[locationKey(nextLocation)];
+    var text = document.getElementById('inventoryMergeText');
+    if (text) {
+      var count = Object.keys((source && source.items) || {}).length;
+      var destinationCount = Object.keys((destination && destination.items) || {}).length;
+      text.textContent = 'Адрес ' + locationLabel(nextLocation) + ' уже есть. Объединить товары? (' +
+        count + ' + ' + destinationCount + ' позиций)';
+    }
+    state.pendingAddressMerge = {sourceKey:String(sourceKey), nextLocation:copyLocation(nextLocation)};
+    var overlay = document.getElementById('inventoryMergeModal');
+    if (overlay) overlay.classList.add('open');
+  }
+
+  function cancelInventoryMerge() {
+    var overlay = document.getElementById('inventoryMergeModal');
+    if (overlay) overlay.classList.remove('open');
+    state.pendingAddressMerge = null;
+  }
+
+  function confirmInventoryMerge() {
+    var pending = state.pendingAddressMerge;
+    if (!pending) return;
+    cancelInventoryMerge();
+    commitInventoryAddressEdit(pending.sourceKey, pending.nextLocation);
+    closeInventoryAddressEdit();
+  }
+
+  function saveInventoryAddressEdit() {
+    var sourceKey = state.addressEditTarget;
+    var source = sourceKey && state.locations[sourceKey];
+    var status = document.getElementById('inventoryAddressEditStatus');
+    if (!source) {
+      if (status) status.textContent = 'Адрес уже удалён или недоступен';
+      return false;
+    }
+    var nextLocation = makeLocation(
+      document.getElementById('inventoryAddressEditWarehouse')?.value,
+      document.getElementById('inventoryAddressEditRow')?.value,
+      document.getElementById('inventoryAddressEditFloor')?.value,
+      document.getElementById('inventoryAddressEditShelf')?.value
+    );
+    if (!nextLocation) {
+      if (status) status.textContent = 'Заполните склад, ряд, этаж и полку';
+      return false;
+    }
+    var nextKey = locationKey(nextLocation);
+    if (nextKey !== String(sourceKey) && state.locations[nextKey]) {
+      showInventoryMergeQuestion(sourceKey, nextLocation);
+      return false;
+    }
+    commitInventoryAddressEdit(sourceKey, nextLocation);
+    closeInventoryAddressEdit();
+    return true;
+  }
+
+  state.editTarget = null;
+
+  function openInventoryEdit(locationKeyValue, itemKeyValue) {
+    var location = state.locations[String(locationKeyValue || '')];
+    var item = location && location.items && location.items[String(itemKeyValue || '')];
+    if (!location || !item) return false;
+    state.editTarget = {locationKey:String(locationKeyValue), itemKey:String(itemKeyValue)};
+    var address = copyLocation(location);
+    var values = {
+      inventoryEditName:item.name || '',
+      inventoryEditBarcode:item.barcode || '',
+      inventoryEditQuantity:Number(item.quantity) || 0,
+      inventoryEditExpiry:item.expiry || '',
+      inventoryEditWarehouse:address.warehouse || '',
+      inventoryEditRow:address.row || '--',
+      inventoryEditFloor:address.floor || '--',
+      inventoryEditShelf:address.shelf || '--'
+    };
+    Object.keys(values).forEach(function (id) {
+      var field = document.getElementById(id);
+      if (field) field.value = values[id];
+    });
+    var status = document.getElementById('inventoryEditStatus');
+    if (status) status.textContent = '';
+    var overlay = document.getElementById('inventoryEditModal');
+    if (overlay) overlay.classList.add('open');
+    return true;
+  }
+
+  function closeInventoryEdit() {
+    var overlay = document.getElementById('inventoryEditModal');
+    if (overlay) overlay.classList.remove('open');
+    state.editTarget = null;
+  }
+
+  function inventoryRowKey(barcode, expiry, name) {
+    var cleanBarcode = String(barcode || '').replace(/\s/g, '');
+    if (cleanBarcode) return inventoryItemKey(cleanBarcode, expiry);
+    return 'NAME:' + String(name || 'Без названия').trim().toLocaleLowerCase('ru-RU') +
+      '|EXP:' + String(expiry || 'без-срока');
+  }
+
+  function updateInventoryCatalogItem(name, barcode) {
+    var cleanBarcode = String(barcode || '').replace(/\s/g, '');
+    var cleanName = String(name || '').trim();
+    if (!cleanName) return;
+    var found = database.findIndex(function (entry) {
+      return cleanBarcode && String(entry && entry.ean || '').replace(/\s/g, '') === cleanBarcode;
+    });
+    if (found >= 0) {
+      database[found] = Object.assign({}, database[found], {ean:cleanBarcode || database[found].ean, name:cleanName});
+    } else if (cleanBarcode) {
+      database.push({ean:cleanBarcode, artikel:'', name:cleanName});
+    }
+    state.catalog = database.map(normalizeProduct).filter(Boolean);
+    state.catalogAvailable = state.catalog.length > 0;
+    try { localStorage.setItem('my_off_db', JSON.stringify(database)); } catch (ignore) {}
+  }
+
+  function saveInventoryEdit() {
+    var target = state.editTarget;
+    var oldLocation = target && state.locations[target.locationKey];
+    var oldItem = oldLocation && oldLocation.items && oldLocation.items[target.itemKey];
+    var status = document.getElementById('inventoryEditStatus');
+    if (!oldLocation || !oldItem) {
+      if (status) status.textContent = 'Строка уже удалена или недоступна';
+      return false;
+    }
+    var name = String(document.getElementById('inventoryEditName')?.value || '').trim();
+    var barcode = String(document.getElementById('inventoryEditBarcode')?.value || '').replace(/\s/g, '');
+    var quantity = Math.max(0, Math.min(99999, parseInt(document.getElementById('inventoryEditQuantity')?.value, 10) || 0));
+    var expiry = String(document.getElementById('inventoryEditExpiry')?.value || '').trim();
+    var nextLocation = makeLocation(
+      document.getElementById('inventoryEditWarehouse')?.value,
+      document.getElementById('inventoryEditRow')?.value,
+      document.getElementById('inventoryEditFloor')?.value,
+      document.getElementById('inventoryEditShelf')?.value
+    );
+    if (!name) { if (status) status.textContent = 'Введите имя товара'; return false; }
+    if (!nextLocation) { if (status) status.textContent = 'Заполните склад, ряд, этаж и полку'; return false; }
+    if (quantity < 1) { if (status) status.textContent = 'Количество должно быть больше нуля'; return false; }
+
+    var nextLocationKey = locationKey(nextLocation);
+    if (!state.locations[nextLocationKey]) {
+      state.locations[nextLocationKey] = Object.assign({}, nextLocation, {items:{}});
+    }
+    var nextKey = inventoryRowKey(barcode, expiry, name);
+    var nextItems = state.locations[nextLocationKey].items || (state.locations[nextLocationKey].items = {});
+    var collision = nextItems[nextKey];
+    delete oldLocation.items[target.itemKey];
+    if (collision && !(nextLocationKey === target.locationKey && nextKey === target.itemKey)) {
+      collision.quantity = Math.min(99999, (Number(collision.quantity) || 0) + quantity);
+      collision.name = name;
+      collision.barcode = barcode;
+      collision.expiry = expiry;
+    } else {
+      nextItems[nextKey] = Object.assign({}, oldItem, {
+        name:name, barcode:barcode, quantity:quantity, expiry:expiry,
+        expiryMode:expiry ? (expiry.length === 4 ? 'year' : expiry.length === 7 ? 'month' : 'day') : ''
+      });
+    }
+    if (!Object.keys(oldLocation.items || {}).length && target.locationKey !== nextLocationKey) {
+      delete state.locations[target.locationKey];
+    }
+    state.events.forEach(function (event) {
+      var sameAddress = String(event && event.address || '') === locationLabel(oldLocation);
+      var sameBarcode = String(event && event.barcode || '') === String(oldItem.barcode || '');
+      var sameExpiry = String(event && event.expiry || '') === String(oldItem.expiry || '');
+      if (sameAddress && sameBarcode && sameExpiry) {
+        event.address = locationLabel(nextLocation);
+        event.warehouse = nextLocation.warehouse;
+        event.row = nextLocation.row;
+        event.floor = nextLocation.floor;
+        event.shelf = nextLocation.shelf;
+        event.name = name;
+        event.barcode = barcode;
+        event.expiry = expiry;
+      }
+    });
+    updateInventoryCatalogItem(name, barcode);
+    saveState();
+    renderCleanupOptions();
+    renderList();
+    setDebug('Строка изменена: ' + name, false);
+    closeInventoryEdit();
+    return true;
+  }
+
+  var inventoryExcelRows = [];
+  var inventoryExcelHeaders = [];
+
+  function inventoryExcelColIdx(id) {
+    var select = document.getElementById(id);
+    return select && select.value !== '' ? parseInt(select.value, 10) : -1;
+  }
+
+  function inventoryExcelValue(row, id) {
+    var index = inventoryExcelColIdx(id);
+    return index >= 0 ? String(row[index] ?? '').trim() : '';
+  }
+
+  function inventoryExcelGuess(headers, words) {
+    return headers.findIndex(function (header) {
+      var lower = String(header || '').toLocaleLowerCase('ru-RU');
+      return words.some(function (word) { return lower.indexOf(word) >= 0; });
+    });
+  }
+
+  function updateInventoryExcelPreview() {
+    var row = inventoryExcelRows[0];
+    var preview = document.getElementById('inventoryExcelRowPreview');
+    var text = document.getElementById('inventoryExcelRowPreviewText');
+    if (!row || !preview || !text) return;
+    preview.style.display = 'block';
+    text.innerHTML = '<b>Товар:</b> ' + escapeHtml(inventoryExcelValue(row, 'inventoryExcelMapName') || '—') +
+      '<br><b>Количество:</b> ' + escapeHtml(inventoryExcelValue(row, 'inventoryExcelMapQty') || '1') +
+      '<br><b>Штрихкод:</b> ' + escapeHtml(inventoryExcelValue(row, 'inventoryExcelMapBarcode') || '—') +
+      '<br><b>Срок:</b> ' + escapeHtml(inventoryExcelValue(row, 'inventoryExcelMapExpiry') || '—');
+  }
+
+  function buildInventoryExcelMaps(headers) {
+    var none = '<option value="">— не используется —</option>';
+    var options = headers.map(function (header, index) {
+      return '<option value="' + index + '">' + String.fromCharCode(65 + index) + ': ' +
+        escapeHtml(header) + '</option>';
+    }).join('');
+    var full = none + options;
+    var guesses = {
+      inventoryExcelMapName:inventoryExcelGuess(headers, ['наим','name','товар','product']),
+      inventoryExcelMapQty:inventoryExcelGuess(headers, ['кол','qty','quant','menge']),
+      inventoryExcelMapBarcode:inventoryExcelGuess(headers, ['ean','штрих','barcode','bcode']),
+      inventoryExcelMapExpiry:inventoryExcelGuess(headers, ['срок','годн','expiry','exp','дат','date']),
+      inventoryExcelMapAddress:inventoryExcelGuess(headers, ['адрес','место','address','location','склад'])
+    };
+    Object.keys(guesses).forEach(function (id) {
+      var select = document.getElementById(id);
+      if (!select) return;
+      select.innerHTML = full;
+      if (guesses[id] >= 0) select.value = String(guesses[id]);
+      select.onchange = updateInventoryExcelPreview;
+    });
+  }
+
+  function onInventoryExcelFileSelected(inputElement) {
+    var file = inputElement && inputElement.files && inputElement.files[0];
+    if (!file) return;
+    var label = document.getElementById('inventoryExcelFileLabel');
+    var fileText = document.getElementById('inventoryExcelFileText');
+    if (fileText) fileText.textContent = '📄 ' + file.name;
+    if (label) label.classList.add('has-file');
+    var status = document.getElementById('inventoryImportStatus');
+    if (status) { status.textContent = ''; status.className = 'inventory-status'; }
+    if (!window.XLSX) {
+      if (status) status.textContent = 'Библиотека Excel ещё загружается. Повторите выбор файла через секунду.';
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      try {
+        var workbook = window.XLSX.read(new Uint8Array(event.target.result), {type:'array', cellDates:true});
+        var sheet = workbook.Sheets[workbook.SheetNames[0]];
+        var rows = window.XLSX.utils.sheet_to_json(sheet, {header:1, defval:'', raw:false});
+        if (!rows.length) throw new Error('Файл пуст');
+        inventoryExcelHeaders = (rows[0] || []).map(function (header, index) {
+          return header ? String(header).trim() : 'Столбец ' + (index + 1);
+        });
+        inventoryExcelRows = rows.slice(1).filter(function (row) {
+          return row.some(function (cell) { return String(cell || '').trim() !== ''; });
+        });
+        var headers = document.getElementById('inventoryExcelHeadersPreview');
+        var headerText = document.getElementById('inventoryExcelHeadersText');
+        if (headers) headers.style.display = 'block';
+        if (headerText) headerText.innerHTML = inventoryExcelHeaders.map(function (header, index) {
+          return '<span style="margin-right:14px;"><b>' + String.fromCharCode(65 + index) +
+            '</b> — ' + escapeHtml(header) + '</span>';
+        }).join('');
+        var mapWrap = document.getElementById('inventoryExcelMapWrap');
+        if (mapWrap) mapWrap.style.display = 'block';
+        buildInventoryExcelMaps(inventoryExcelHeaders);
+        updateInventoryExcelPreview();
+        var button = document.getElementById('btnDoInventoryExcelImport');
+        if (button) button.style.display = inventoryExcelRows.length ? 'block' : 'none';
+        if (status) status.textContent = inventoryExcelRows.length
+          ? 'Готово строк к добавлению: ' + inventoryExcelRows.length
+          : 'В файле нет строк после заголовка';
+      } catch (error) {
+        if (status) { status.textContent = 'Не удалось прочитать файл: ' + error.message; status.className = 'inventory-status error'; }
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function normalizeInventoryImportExpiry(value) {
+    var raw = String(value || '').trim();
+    if (!raw) return '';
+    var date = raw.match(/^(\d{1,4})[.\-/](\d{1,2})(?:[.\-/](\d{1,4}))?$/);
+    if (date) {
+      var a = date[1], b = String(date[2]).padStart(2, '0'), c = date[3];
+      if (!c && a.length === 4) return a + '-' + b;
+      if (a.length === 4) return a + '-' + b + (c ? '-' + String(c).padStart(2, '0') : '');
+      if (c) return String(c).length === 2 ? '20' + c + '-' + b + '-' + String(a).padStart(2, '0')
+        : c + '-' + b + '-' + String(a).padStart(2, '0');
+    }
+    return raw;
+  }
+
+  function inventoryImportLocation(addressValue) {
+    var parsed = addressValue ? parseAddress(addressValue) : null;
+    return parsed || state.current;
+  }
+
+  function processInventoryExcelImport() {
+    if (!inventoryExcelRows.length) return;
+    var nameIndex = inventoryExcelColIdx('inventoryExcelMapName');
+    if (nameIndex < 0) {
+      var missing = document.getElementById('inventoryImportStatus');
+      if (missing) { missing.textContent = 'Укажите столбец «Наименование»'; missing.className = 'inventory-status error'; }
+      return;
+    }
+    if (!state.current && !inventoryExcelRows.some(function (row) {
+      return !!inventoryImportLocation(inventoryExcelValue(row, 'inventoryExcelMapAddress'));
+    })) {
+      var noAddress = document.getElementById('inventoryImportStatus');
+      if (noAddress) { noAddress.textContent = 'Сначала выберите место хранения или добавьте адрес в Excel'; noAddress.className = 'inventory-status error'; }
+      return;
+    }
+    var imported = 0;
+    var merged = 0;
+    inventoryExcelRows.forEach(function (row) {
+      var name = inventoryExcelValue(row, 'inventoryExcelMapName');
+      if (!name) return;
+      var barcode = inventoryExcelValue(row, 'inventoryExcelMapBarcode').replace(/\s/g, '');
+      var expiry = normalizeInventoryImportExpiry(inventoryExcelValue(row, 'inventoryExcelMapExpiry'));
+      var quantity = Math.max(1, Math.min(99999, parseInt(inventoryExcelValue(row, 'inventoryExcelMapQty').replace(/\s/g, ''), 10) || 1));
+      var location = inventoryImportLocation(inventoryExcelValue(row, 'inventoryExcelMapAddress'));
+      if (!location) return;
+      var key = locationKey(location);
+      if (!state.locations[key]) state.locations[key] = Object.assign({}, location, {items:{}});
+      var items = state.locations[key].items || (state.locations[key].items = {});
+      var itemKey = inventoryRowKey(barcode, expiry, name);
+      var old = items[itemKey];
+      if (old) {
+        old.quantity = Math.min(99999, (Number(old.quantity) || 0) + quantity);
+        if (!old.name || old.name.indexOf('База данных') === 0) old.name = name;
+        merged += 1;
+      } else {
+        items[itemKey] = {barcode:barcode, name:name, quantity:quantity, lastSeen:Date.now(),
+          expiry:expiry, expiryMode:expiry.length === 4 ? 'year' : expiry.length === 7 ? 'month' : expiry ? 'day' : ''};
+      }
+      state.events.push({timestamp:Date.now(), address:locationLabel(location), warehouse:location.warehouse,
+        row:location.row, floor:location.floor, shelf:location.shelf, barcode:barcode, name:name,
+        expiry:expiry, quantity:quantity, source:'excel'});
+      updateInventoryCatalogItem(name, barcode);
+      imported += 1;
+    });
+    if (!imported) {
+      var emptyStatus = document.getElementById('inventoryImportStatus');
+      if (emptyStatus) { emptyStatus.textContent = 'Нет строк для добавления'; emptyStatus.className = 'inventory-status error'; }
+      return;
+    }
+    saveState();
+    renderCleanupOptions();
+    renderList();
+    var done = document.getElementById('inventoryImportStatus');
+    if (done) { done.textContent = 'Добавлено строк: ' + imported + (merged ? ' · объединено: ' + merged : ''); done.className = 'inventory-status ok'; }
+    setDebug('Импортировано в сканированные строки: ' + imported, false);
+    setTimeout(closeInventoryImport, 900);
+  }
+
+  function openInventoryImport() {
+    initialize();
+    var modal = document.getElementById('inventoryImportModal');
+    if (modal) { modal.style.display = 'flex'; modal.classList.add('open', 'active'); }
+  }
+
+  function closeInventoryImport() {
+    var modal = document.getElementById('inventoryImportModal');
+    if (modal) { modal.classList.remove('open', 'active'); modal.style.display = 'none'; }
+  }
 
   function exportDates() {
     var map = {};
@@ -14597,20 +16368,39 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
       var date = state.selectedExportDate;
-      var rows = state.events.filter(function (event) {
+      var selectedEvents = state.events.filter(function (event) {
         if (!date) return true;
         var stamp = new Date(Number(event.timestamp) || 0);
         var eventDate = stamp.getFullYear() + '-' + String(stamp.getMonth() + 1).padStart(2, '0') +
           '-' + String(stamp.getDate()).padStart(2, '0');
         return eventDate === date;
-      }).map(function (event) {
+      });
+      var toExportRow = function (event) {
         return {
           'Дата и время':new Date(Number(event.timestamp) || Date.now()).toLocaleString(),
           'Адрес':event.address || '',
           'Штрихкод':event.barcode || '',
-          'Товар':event.name || 'База данных недоступна (Наименования товара нет)'
+          'Товар':event.name || 'База данных недоступна (Наименования товара нет)',
+          'Срок годности':event.expiry || ''
         };
-      });
+      };
+      var rows = selectedEvents.map(toExportRow);
+      var expiredRows = selectedEvents.filter(function (event) {
+        var expiry = String(event && event.expiry || '').trim();
+        if (!expiry) return false;
+        var normalized = '';
+        if (/^\d{4}$/.test(expiry)) {
+          normalized = expiry + '-12-31';
+        } else if (/^\d{4}-\d{2}$/.test(expiry)) {
+          var monthEnd = new Date(Number(expiry.slice(0, 4)), Number(expiry.slice(5, 7)), 0);
+          normalized = monthEnd.getFullYear() + '-' +
+            String(monthEnd.getMonth() + 1).padStart(2, '0') + '-' +
+            String(monthEnd.getDate()).padStart(2, '0');
+        } else if (/^\d{4}-\d{2}-\d{2}$/.test(expiry)) {
+          normalized = expiry;
+        }
+        return normalized && normalized < '2026-11-01';
+      }).map(toExportRow);
       if (!rows.length) {
         alert('За выбранную дату сканирований нет.');
         return;
@@ -14618,8 +16408,13 @@ document.addEventListener('DOMContentLoaded', function () {
       var book = window.XLSX.utils.book_new();
       var sheet = window.XLSX.utils.json_to_sheet(rows);
       window.XLSX.utils.book_append_sheet(book, sheet, 'Инвентаризация');
+      if (expiredRows.length) {
+        var expiredSheet = window.XLSX.utils.json_to_sheet(expiredRows);
+        window.XLSX.utils.book_append_sheet(book, expiredSheet, 'Просроченные');
+      }
       window.XLSX.writeFile(book, 'inventory_' + (date || 'all') + '.xlsx');
-      setDebug('Экспортировано сканирований: ' + rows.length, false);
+      setDebug('Экспортировано сканирований: ' + rows.length +
+        (expiredRows.length ? ' · просроченных: ' + expiredRows.length : ''), false);
     } catch (error) {
       report('Ошибка экспорта XLSX', error);
       alert('Не удалось создать Excel-файл. Данные остались сохранены.');
@@ -14689,6 +16484,291 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   } catch (ignore) {}
 });
+</script>
+<script type="module">
+  /*
+   * Local-first Firebase sync.
+   *
+   * The browser keeps the working copy in LocalStorage/IndexedDB. Firestore
+   * stores the catalog, receiving history, and inventory locations. Changes
+   * are sent immediately when online; the 15-minute timer is the fallback
+   * refresh when nothing changed. A pending timestamp survives a page reload,
+   * so an offline change is retried after the connection returns.
+   *
+   * Firestore rules for the project must allow the intended warehouse users
+   * to read and write warehouses/warehouse26. This client config is not a
+   * substitute for Firestore security rules.
+   */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc,
+    updateDoc,
+    addDoc,
+    collection,
+    query,
+    orderBy,
+    onSnapshot
+  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAdieSc0CpKvG-WfsLqaJkhFV_w69A4nQQ",
+    authDomain: "warehouse26-fbbee.firebaseapp.com",
+    projectId: "warehouse26-fbbee",
+    storageBucket: "warehouse26-fbbee.firebasestorage.app",
+    messagingSenderId: "965022333314",
+    appId: "1:965022333314:web:2ccb6b496114257055379b",
+    measurementId: "G-D4BRWTPXGM"
+  };
+
+  const firebaseApp = initializeApp(firebaseConfig);
+  const firestore = getFirestore(firebaseApp);
+  const warehouseDocument = doc(firestore, "warehouses", "warehouse26");
+  const DIRTY_KEY = "bi_warehouse_cloud_dirty_at";
+  const LAST_SYNC_KEY = "bi_warehouse_cloud_last_sync_at";
+  const CLIENT_KEY = "bi_warehouse_cloud_client_id";
+  const CLIENT_ID = localStorage.getItem(CLIENT_KEY) ||
+    ("client_" + Math.random().toString(36).slice(2) + "_" + Date.now().toString(36));
+  localStorage.setItem(CLIENT_KEY, CLIENT_ID);
+
+  let syncInFlight = false;
+  let lastStatus = "";
+
+  function cloudStatus(message, isError = false) {
+    const text = String(message || "");
+    if (text === lastStatus) return;
+    lastStatus = text;
+    const el = document.getElementById("settingsStorageSub");
+    if (el && text) el.textContent = (isError ? "⚠️ " : "☁️ ") + text;
+    try { localStorage.setItem("bi_warehouse_cloud_status", text); } catch (e) {}
+  }
+
+  function markDirty() {
+    const now = Date.now();
+    localStorage.setItem(DIRTY_KEY, String(now));
+    cloudStatus(navigator.onLine ? "Ожидает синхронизации" : "Офлайн · изменения сохранены локально");
+    if (navigator.onLine) syncNow("change");
+  }
+
+  function localSnapshot() {
+    const value = window.__warehouseCloudSnapshot?.();
+    if (!value) return null;
+    // Firestore rejects undefined values. The app data is JSON-compatible,
+    // so a JSON round-trip also removes any accidental undefined properties.
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function remotePayload(data) {
+    return {
+      database: Array.isArray(data?.database) ? data.database : [],
+      arrivals: Array.isArray(data?.arrivals) ? data.arrivals : [],
+      inventoryLocations: data?.inventoryLocations &&
+        typeof data.inventoryLocations === "object" ? data.inventoryLocations : {},
+      inventoryEvents: Array.isArray(data?.inventoryEvents) ? data.inventoryEvents : [],
+      inventoryCurrent: data?.inventoryCurrent || null
+    };
+  }
+
+  async function pushLocal(snapshot, localUpdatedAt) {
+    await setDoc(warehouseDocument, {
+      ...snapshot,
+      updatedAt: localUpdatedAt,
+      updatedBy: CLIENT_ID,
+      schemaVersion: 1
+    });
+    localStorage.setItem(LAST_SYNC_KEY, String(localUpdatedAt));
+    localStorage.removeItem(DIRTY_KEY);
+    cloudStatus("Синхронизировано");
+  }
+
+  async function syncNow(reason = "timer") {
+    if (!navigator.onLine || syncInFlight || !window.__warehouseCloudSnapshot) return;
+    syncInFlight = true;
+    try {
+      const snapshot = localSnapshot();
+      if (!snapshot) return;
+      const dirtyAt = Number(localStorage.getItem(DIRTY_KEY) || 0);
+      const lastSyncAt = Number(localStorage.getItem(LAST_SYNC_KEY) || 0);
+      const remote = await getDoc(warehouseDocument);
+
+      if (!remote.exists()) {
+        // First connected device seeds the online database from its offline
+        // cache. Later devices will download this document instead.
+        await pushLocal(snapshot, Math.max(dirtyAt, Date.now()));
+        return;
+      }
+
+      const remoteData = remote.data() || {};
+      const remoteUpdatedAt = Number(remoteData.updatedAt || 0);
+      if (dirtyAt && dirtyAt > remoteUpdatedAt) {
+        await pushLocal(snapshot, dirtyAt);
+      } else if (remoteUpdatedAt > lastSyncAt || !lastSyncAt) {
+        if (window.__warehouseApplyCloudSnapshot?.(remotePayload(remoteData))) {
+          localStorage.setItem(LAST_SYNC_KEY, String(remoteUpdatedAt || Date.now()));
+          localStorage.removeItem(DIRTY_KEY);
+          cloudStatus("Получено из облака");
+        }
+      } else {
+        cloudStatus("Синхронизировано");
+      }
+    } catch (error) {
+      console.warn("Firebase warehouse sync failed:", error);
+      cloudStatus(navigator.onLine
+        ? "Firebase недоступен · повтор через 15 минут"
+        : "Офлайн · изменения сохранены локально", true);
+    } finally {
+      syncInFlight = false;
+      const pendingAt = Number(localStorage.getItem(DIRTY_KEY) || 0);
+      const syncedAt = Number(localStorage.getItem(LAST_SYNC_KEY) || 0);
+      if (navigator.onLine && pendingAt > syncedAt) {
+        setTimeout(() => syncNow("queued-change"), 0);
+      }
+    }
+  }
+
+  window.__warehouseCloudMarkDirty = markDirty;
+  window.__warehouseCloudSyncNow = syncNow;
+
+  window.addEventListener("online", () => {
+    cloudStatus("Соединение восстановлено");
+    syncNow("online");
+  });
+  window.addEventListener("offline", () => {
+    cloudStatus("Офлайн · изменения сохраняются локально");
+  });
+
+  // Receive edits made on another connected device as soon as Firestore
+  // reports them; the timer below remains the required 15-minute fallback.
+  onSnapshot(warehouseDocument, snapshot => {
+    if (!snapshot.exists()) return;
+    const data = snapshot.data() || {};
+    const remoteUpdatedAt = Number(data.updatedAt || 0);
+    const dirtyAt = Number(localStorage.getItem(DIRTY_KEY) || 0);
+    const lastSyncAt = Number(localStorage.getItem(LAST_SYNC_KEY) || 0);
+    if (dirtyAt && dirtyAt > remoteUpdatedAt) {
+      syncNow("snapshot-dirty");
+      return;
+    }
+    if (remoteUpdatedAt > lastSyncAt && window.__warehouseApplyCloudSnapshot) {
+      if (window.__warehouseApplyCloudSnapshot(remotePayload(data))) {
+        localStorage.setItem(LAST_SYNC_KEY, String(remoteUpdatedAt || Date.now()));
+        localStorage.removeItem(DIRTY_KEY);
+        cloudStatus("Получено из облака");
+      }
+    }
+  }, error => {
+    console.warn("Firebase warehouse listener failed:", error);
+    cloudStatus("Firebase listener недоступен · локальный режим", true);
+  });
+
+  setInterval(() => syncNow("15-minute"), 15 * 60 * 1000);
+  setTimeout(() => syncNow("startup"), 0);
+
+  /*
+   * ══════════════════════════════════════════════
+   * АВТОРИЗАЦИЯ, ПРОФИЛЬ, ЗАДАЧИ, ОТДЕЛЬНЫЕ КОЛЛЕКЦИИ
+   * ══════════════════════════════════════════════
+   * Использует тот же Firebase-проект, что и index.html (Auth + Firestore).
+   * Каждое окно приёмки/каталога дополнительно пишет свою запись в
+   * top-level коллекцию Firestore (см. window.__warehouseSaveToCollection),
+   * не заменяя офлайн-первую логику выше.
+   */
+  const auth = getAuth(firebaseApp);
+  let unsubscribeTasks = null;
+
+  function _wh_stopTasksListener() {
+    if (typeof unsubscribeTasks === 'function') unsubscribeTasks();
+    unsubscribeTasks = null;
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      // Не авторизован — назад на страницу входа.
+      _wh_stopTasksListener();
+      window.location.href = 'index.html';
+      return;
+    }
+
+    let profile = { firstName: '', lastName: '', email: user.email || '' };
+    try {
+      const snap = await getDoc(doc(firestore, 'users', user.uid));
+      if (snap.exists()) {
+        const data = snap.data() || {};
+        profile.firstName = data.firstName || '';
+        profile.lastName = data.lastName || '';
+        profile.email = data.email || user.email || '';
+      }
+    } catch (e) {
+      console.warn('Не удалось загрузить профиль пользователя:', e);
+    }
+
+    window.__warehouseUser = {
+      uid: user.uid,
+      email: profile.email,
+      firstName: profile.firstName,
+      lastName: profile.lastName
+    };
+    if (typeof window.onWarehouseUserReady === 'function') {
+      try { window.onWarehouseUserReady(window.__warehouseUser); } catch (e) {}
+    }
+
+    // Подписка на задачи, назначенные этому аккаунту администратором (admin.html).
+    _wh_stopTasksListener();
+    const tasksCol = collection(firestore, 'tasks_' + user.uid);
+    let tasksQuery = tasksCol;
+    try { tasksQuery = query(tasksCol, orderBy('createdAt', 'desc')); } catch (e) {}
+    unsubscribeTasks = onSnapshot(tasksQuery, (snapshot) => {
+      const tasks = [];
+      snapshot.forEach((docSnap) => tasks.push({ id: docSnap.id, ...docSnap.data() }));
+      window.__warehouseTasks = tasks;
+      if (typeof window.onWarehouseTasksUpdate === 'function') {
+        try { window.onWarehouseTasksUpdate(tasks); } catch (e) {}
+      }
+    }, (error) => {
+      console.warn('Не удалось получить задачи:', error);
+    });
+  });
+
+  window.__warehouseLogout = function () {
+    _wh_stopTasksListener();
+    signOut(auth).finally(() => { window.location.href = 'index.html'; });
+  };
+
+  window.__warehouseUpdateTask = async function (taskId, updates) {
+    const user = auth.currentUser;
+    if (!user || !taskId) return false;
+    try {
+      await updateDoc(doc(firestore, 'tasks_' + user.uid, taskId), updates);
+      return true;
+    } catch (e) {
+      console.warn('Не удалось обновить задачу:', e);
+      return false;
+    }
+  };
+
+  // Пишет одну запись в отдельную top-level коллекцию Firestore
+  // (blind_receipt / auto_receipt / assignment_receipt / history / catalog).
+  // Не блокирует и не отменяет локальное сохранение — ошибки только логируются.
+  window.__warehouseSaveToCollection = async function (collectionName, data) {
+    if (!collectionName) return;
+    try {
+      const user = auth.currentUser;
+      await addDoc(collection(firestore, collectionName), {
+        ...data,
+        uid: user ? user.uid : '',
+        savedAt: Date.now()
+      });
+    } catch (e) {
+      console.warn('Не удалось сохранить в коллекцию ' + collectionName + ':', e);
+    }
+  };
 </script>
 </body>
 </html>
