@@ -225,10 +225,9 @@ let tempRegCode = null;
 let currentResetCode = null;
 let currentResetEmail = "";
 
-// Данные администратора (исправлено на khazratbek1@gmail.com)
+// Данные администратора
 const ADMIN_EMAIL = "khazratbek1@gmail.com";
 
-// Переключение видимости пароля
 function togglePassword(inputId, btn) {
   const input = document.getElementById(inputId);
   const isPassword = input.type === 'password';
@@ -287,14 +286,17 @@ function switchMode(mode) {
   }
 }
 
-// 1. ВХОД С ПРОВЕРКОЙ НА АДМИНА И ПЕРЕХОДОМ НА admin.html
+// 1. ВХОД С ЖЕСТКИМ ПЕРЕХОДОМ НА admin.html ДЛЯ АДМИНА
 function handleLogin(event) {
   event.preventDefault();
-  let emailInput = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const rawInput = document.getElementById('loginEmail').value.trim();
+  let emailInput = rawInput.toLowerCase();
   const password = document.getElementById('loginPassword').value.trim();
 
-  // Если введено 'admin', подставляем почту khazratbek1@gmail.com
-  if (emailInput === 'admin') {
+  // Проверяем, входил ли пользователь как admin
+  const isAdminLogin = (rawInput.toLowerCase() === 'admin') || (emailInput === ADMIN_EMAIL);
+
+  if (rawInput.toLowerCase() === 'admin') {
     emailInput = ADMIN_EMAIL;
   }
 
@@ -303,27 +305,35 @@ function handleLogin(event) {
       const user = userCredential.user;
       localStorage.setItem('wh_authenticated', 'true');
       
-      // Проверяем роль через Firestore
+      // Если вошли по логину admin или почте администратора — всегда перенаправляем в admin.html
+      if (isAdminLogin) {
+        localStorage.setItem('wh_is_admin', 'true');
+        // Записываем/обновляем роль в Firestore для надежности
+        db.collection('users').doc(user.uid).set({
+          email: ADMIN_EMAIL,
+          role: 'admin'
+        }, { merge: true });
+
+        showToast('Вход выполнен! Переход в панель администратора...');
+        setTimeout(() => { window.location.href = 'admin.html'; }, 800);
+        return;
+      }
+
+      // Для обычных пользователей
       db.collection('users').doc(user.uid).get().then((doc) => {
         const userData = doc.data();
-        const isUserAdmin = (emailInput === ADMIN_EMAIL) || (userData && userData.role === 'admin');
-
-        if (isUserAdmin) {
+        if (userData && userData.role === 'admin') {
           localStorage.setItem('wh_is_admin', 'true');
           showToast('Вход выполнен! Переход в панель администратора...');
-          setTimeout(() => { window.location.href = 'admin.html'; }, 1000);
+          setTimeout(() => { window.location.href = 'admin.html'; }, 800);
         } else {
           localStorage.setItem('wh_is_admin', 'false');
           showToast('Успешный вход! Перенаправление...');
-          setTimeout(() => { window.location.href = 'warehouse.html'; }, 1000);
+          setTimeout(() => { window.location.href = 'warehouse.html'; }, 800);
         }
       }).catch(() => {
-        if (emailInput === ADMIN_EMAIL) {
-          localStorage.setItem('wh_is_admin', 'true');
-          window.location.href = 'admin.html';
-        } else {
-          window.location.href = 'warehouse.html';
-        }
+        localStorage.setItem('wh_is_admin', 'false');
+        window.location.href = 'warehouse.html';
       });
     })
     .catch((error) => {
