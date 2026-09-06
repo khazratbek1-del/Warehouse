@@ -237,19 +237,23 @@ const COL = {
   users: "users",
 };
 
-/* =========================================================
-   СЕССИЯ / ПРОФИЛЬ
-   ========================================================= */
-const sessionUserId = localStorage.getItem("wh_user_id");
-if(!sessionUserId){
+const sessionUserId = localStorage.getItem("wh_user_id") 
+                   || localStorage.getItem("user_id") 
+                   || localStorage.getItem("currentUser");
+
+if (!sessionUserId) {
   location.replace("index.html");
 }
+
 window.currentProfile = null;
 
-function logout(){
+function logout() {
   localStorage.removeItem("wh_user_id");
+  localStorage.removeItem("user_id");
+  localStorage.removeItem("currentUser");
   location.href = "index.html";
 }
+
 
 /* =========================================================
    ЛОКАЛЬНОЕ СОСТОЯНИЕ ДАННЫХ (наполняется из Firestore в реальном времени)
