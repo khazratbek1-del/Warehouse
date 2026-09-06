@@ -62,7 +62,6 @@ body {
 }
 .auth-input:focus { border-color: var(--blue); background: rgba(255, 255, 255, 0.14); }
 
-/* Контейнер для поля пароля с кнопкой глазика */
 .password-wrapper {
   position: relative;
   width: 100%;
@@ -226,8 +225,8 @@ let tempRegCode = null;
 let currentResetCode = null;
 let currentResetEmail = "";
 
-// Данные администратора
-const ADMIN_EMAIL = "khazratbek@gmail.com";
+// Данные администратора (исправлено на khazratbek1@gmail.com)
+const ADMIN_EMAIL = "khazratbek1@gmail.com";
 
 // Переключение видимости пароля
 function togglePassword(inputId, btn) {
@@ -294,7 +293,7 @@ function handleLogin(event) {
   let emailInput = document.getElementById('loginEmail').value.trim().toLowerCase();
   const password = document.getElementById('loginPassword').value.trim();
 
-  // Если введено 'admin', заменяем на почту администратора
+  // Если введено 'admin', подставляем почту khazratbek1@gmail.com
   if (emailInput === 'admin') {
     emailInput = ADMIN_EMAIL;
   }
